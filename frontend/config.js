@@ -1,19 +1,14 @@
-// config.js - Frontend Configuration for Render
+// frontend/config.js
 const config = {
-  // API URLs - Use Render URL (no /api needed since it's served from same domain)
-  apiUrl: window.location.origin + '/api',
-  wsUrl: window.location.origin.replace('http', 'ws'),
-  
-  // App Info
+  apiUrl: 'https://alpha-af1q.onrender.com/api',
+  wsUrl: 'wss://alpha-af1q.onrender.com',
   appName: 'Alpha Platform',
   version: '1.0.0',
-  domain: window.location.origin,
+  domain: 'https://alpha-af1q.onrender.com',
   
-  // Environment
-  isDevelopment: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
-  isProduction: window.location.hostname !== 'localhost',
+  isDevelopment: window.location.hostname === 'localhost',
+  isProduction: window.location.hostname === 'alpha-af1q.onrender.com',
   
-  // Feature Flags
   features: {
     enableMonetization: true,
     enableDocker: true,
@@ -23,15 +18,13 @@ const config = {
     enableNotifications: true,
   },
   
-  // Limits
   limits: {
-    maxFileSize: 100 * 1024 * 1024, // 100MB
-    maxImageSize: 5 * 1024 * 1024, // 5MB
+    maxFileSize: 100 * 1024 * 1024,
+    maxImageSize: 5 * 1024 * 1024,
     maxProjectFiles: 1000,
     maxDeployments: 50,
   },
   
-  // Defaults
   defaults: {
     language: 'en',
     theme: 'light',
@@ -41,7 +34,5 @@ const config = {
   },
 };
 
-// Freeze config to prevent modifications
 Object.freeze(config);
-
 export default config;
