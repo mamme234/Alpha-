@@ -11,10 +11,6 @@
 </head>
 <body>
     <div class="bg-gradient"></div>
-    <div class="symbiote-particle"></div>
-    <div class="symbiote-particle"></div>
-    <div class="glitch-line"></div>
-    <div class="glitch-line"></div>
 
     <div class="auth-page">
         <div class="auth-container">
@@ -41,7 +37,7 @@
             <h1 class="auth-title">Welcome Back</h1>
             <p class="auth-subtitle">Sign in to your account</p>
 
-            <form id="login-form" onsubmit="handleLogin(event)" class="auth-form">
+            <form id="login-form" class="auth-form">
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
                     <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
@@ -55,7 +51,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+                <button type="button" class="btn btn-primary btn-full" id="login-btn" onclick="handleLogin()">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
             </form>
@@ -66,43 +62,185 @@
         </div>
     </div>
 
-    <script type="module">
-        import { login, showError, showSuccess } from './all.js';
+    <script>
+        // ============================================================
+        // SIMPLE LOGIN FUNCTION - NO MODULES
+        // ============================================================
+        
+        const API_URL = 'https://alpha-af1q.onrender.com/api';
 
-        window.login = login;
-        window.showError = showError;
-        window.showSuccess = showSuccess;
-
-        window.handleLogin = async (event) => {
-            event.preventDefault();
+        async function handleLogin() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
             
             if (!email || !password) {
-                showError('Please enter both email and password');
+                showNotification('Please enter both email and password', 'error');
                 return;
             }
             
-            const btn = document.getElementById('login-btn');
+            // Disable button and show loading
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
             
             try {
-                await login(email, password);
+                console.log('📤 Logging in:', email);
+                
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                console.log('📥 Login response:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+                
+                if (data.success && data.user) {
+                    // Store user data
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Store token
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                    }
+                    
+                    showNotification(`Welcome ${data.user.username}!`, 'success');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'developer' || data.user.isDeveloper) {
+                            window.location.href = 'developers.html';
+                        } else {
+                            window.location.href = 'users.html';
+                        }
+                    }, 500);
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+                
             } catch (error) {
-                showError(error.message || 'Login failed. Please try again.');
-            } finally {
+                console.error('❌ Login error:', error);
+                showNotification(error.message || 'Login failed. Please check your credentials.', 'error');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
             }
-        };
+        }
 
-        window.showForgotPassword = () => {
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingContainer = document.getElementById('notification-container');
+            if (existingContainer) {
+                existingContainer.remove();
+            }
+            
+            const container = document.createElement('div');
+            container.id = 'notification-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                max-width: 380px;
+                width: 100%;
+            `;
+            document.body.appendChild(container);
+            
+            const colors = {
+                success: 'rgba(46, 204, 113, 0.95)',
+                error: 'rgba(231, 76, 60, 0.95)',
+                warning: 'rgba(243, 156, 18, 0.95)',
+                info: 'rgba(52, 152, 219, 0.95)'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 500;
+                animation: slideInRight 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            `;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                            if (container.children.length === 0) {
+                                container.remove();
+                            }
+                        }
+                    }, 300);
+                }
+            }, 4000);
+            
+            notification.addEventListener('click', () => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                            if (container.children.length === 0) {
+                                container.remove();
+                            }
+                        }
+                    }, 300);
+                }
+            });
+        }
+
+        function showForgotPassword() {
             const email = prompt('Enter your email address to reset your password:');
             if (email) {
-                showSuccess('Password reset link sent to your email');
+                showNotification('Password reset link sent to your email', 'success');
             }
-        };
+        }
+
+        // Enter key support
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+            document.getElementById('email').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('password').focus();
+                }
+            });
+        });
     </script>
+
+    <style>
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
 </body>
-</html>
+    </html>
