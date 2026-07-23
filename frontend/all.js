@@ -1,199 +1,185 @@
-// frontend/all.js - Updated register function
+// all.js - Complete updated file
 import api from './api.js';
-import config from './config.js';
 
-// ==================== USER MANAGEMENT ====================
+// ============================================================
+// NAVIGATION FUNCTIONS
+// ============================================================
+
+export const initNavigation = () => {
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+
+    if (hamburger && nav) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            nav.classList.toggle('open');
+        });
+
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                nav.classList.remove('open');
+            });
+        });
+    }
+
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (currentScroll > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    const logoLink = document.getElementById('logoLink');
+    if (logoLink) {
+        logoLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(0.92)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+};
+
+// ============================================================
+// USER MANAGEMENT
+// ============================================================
 
 export const register = async (userData) => {
-  try {
-    console.log('📤 Sending registration request to:', config.apiUrl);
-    console.log('📤 User data:', { ...userData, password: '***' });
-    
-    const response = await api.auth.register(userData);
-    console.log('✅ Registration response:', response);
-    
-    showSuccess('Registration successful! Please check your email to verify your account.');
-    
-    // Redirect to login after 2 seconds
-    setTimeout(() => {
-      navigateTo('login');
-    }, 2000);
-    
-    return response;
-  } catch (error) {
-    console.error('❌ Registration error:', error);
-    showError(error.message || 'Registration failed. Please try again.');
-    throw error;
-  }
+    try {
+        const response = await api.auth.register(userData);
+        showNotification('Account created! Please login.', 'success');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
+        return response;
+    } catch (error) {
+        showNotification(error.message || 'Registration failed', 'error');
+        throw error;
+    }
 };
 
-export const login = async (email, password, twoFactorCode) => {
-  try {
-    const response = await api.auth.login({ email, password, twoFactorCode });
-    state.currentUser = response.user;
-    updateUI();
-    showSuccess('Login successful!');
-    return response;
-  } catch (error) {
-    showError(error.message);
-    throw error;
-  }
+export const login = async (email, password) => {
+    try {
+        const response = await api.auth.login({ email, password });
+        if (response.user) {
+            localStorage.setItem('user', JSON.stringify(response.user));
+            showNotification(`Welcome ${response.user.username}!`, 'success');
+            setTimeout(() => {
+                if (response.user.role === 'developer' || response.user.isDeveloper) {
+                    window.location.href = 'developers.html';
+                } else {
+                    window.location.href = 'users.html';
+                }
+            }, 500);
+        }
+        return response;
+    } catch (error) {
+        showNotification(error.message || 'Login failed', 'error');
+        throw error;
+    }
 };
 
-export const logout = async () => {
-  try {
-    await api.auth.logout();
-    state.currentUser = null;
-    updateUI();
-    showSuccess('Logged out successfully');
-    navigateTo('index');
-  } catch (error) {
-    showError('Logout failed');
-  }
+export const logout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    window.location.href = 'index.html';
 };
 
-// ==================== NOTIFICATION FUNCTIONS ====================
-
-export const showSuccess = (message) => {
-  showNotification(message, 'success');
-};
-
-export const showError = (message) => {
-  showNotification(message, 'error');
-};
-
-export const showInfo = (message) => {
-  showNotification(message, 'info');
-};
-
-export const showWarning = (message) => {
-  showNotification(message, 'warning');
-};
-
-const showNotification = (message, type = 'info') => {
-  const container = document.getElementById('notification-container');
-  if (!container) {
-    const newContainer = document.createElement('div');
-    newContainer.id = 'notification-container';
-    newContainer.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 400px;
-      width: 100%;
-    `;
-    document.body.appendChild(newContainer);
-  }
-  
-  const notification = document.createElement('div');
-  notification.className = `notification notification-${type}`;
-  notification.style.cssText = `
-    background: ${type === 'success' ? '#2ecc71' : 
-                type === 'error' ? '#e74c3c' : 
-                type === 'warning' ? '#f39c12' : '#3498db'};
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: slideIn 0.3s ease;
-    cursor: pointer;
-  `;
-  notification.textContent = message;
-  
-  const containerRef = document.getElementById('notification-container');
-  containerRef.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-  }, 5000);
-  
-  notification.addEventListener('click', () => {
-    notification.style.animation = 'slideOut 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-  });
-};
-
-// ==================== NAVIGATION ====================
+// ============================================================
+// NAVIGATION HELPER
+// ============================================================
 
 export const navigateTo = (page, params = {}) => {
-  const url = new URL(window.location.href);
-  url.pathname = `/${page}.html`;
-  Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.set(key, value);
-  });
-  window.location.href = url.toString();
+    const url = new URL(window.location.href);
+    url.pathname = `/${page}.html`;
+    Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.set(key, value);
+    });
+    window.location.href = url.toString();
 };
 
 export const getUrlParams = () => {
-  return Object.fromEntries(new URLSearchParams(window.location.search));
+    return Object.fromEntries(new URLSearchParams(window.location.search));
 };
 
-// ==================== UI UPDATES ====================
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
 
-export const updateUI = () => {
-  const navAuth = document.querySelectorAll('[data-auth]');
-  const navGuest = document.querySelectorAll('[data-guest]');
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  
-  if (user) {
-    navAuth.forEach(el => el.style.display = 'block');
-    navGuest.forEach(el => el.style.display = 'none');
+export const showNotification = (message, type = 'info') => {
+    const container = document.getElementById('notification-container');
+    if (!container) {
+        const div = document.createElement('div');
+        div.id = 'notification-container';
+        div.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        `;
+        document.body.appendChild(div);
+    }
     
-    const usernameEl = document.querySelector('[data-username]');
-    if (usernameEl) usernameEl.textContent = user.username;
+    const colors = {
+        success: '#2ecc71',
+        error: '#e74c3c',
+        warning: '#f39c12',
+        info: '#3498db'
+    };
     
-    const avatarEl = document.querySelector('[data-avatar]');
-    if (avatarEl && user.avatar) avatarEl.src = user.avatar;
-  } else {
-    navAuth.forEach(el => el.style.display = 'none');
-    navGuest.forEach(el => el.style.display = 'block');
-  }
-};
-
-// ==================== LOADING STATES ====================
-
-export const showLoading = (element) => {
-  if (typeof element === 'string') {
-    element = document.querySelector(element);
-  }
-  if (element) {
-    element.innerHTML = `
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading...</p>
-      </div>
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        background: ${colors[type] || colors.info};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        cursor: pointer;
     `;
-  }
+    notification.textContent = message;
+    
+    document.getElementById('notification-container').appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+    
+    notification.addEventListener('click', () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    });
 };
 
-export const hideLoading = (element) => {
-  if (typeof element === 'string') {
-    element = document.querySelector(element);
-  }
-  if (element) {
-    const loadingEl = element.querySelector('.loading-spinner');
-    if (loadingEl) loadingEl.remove();
-  }
-};
+export const showSuccess = (message) => showNotification(message, 'success');
+export const showError = (message) => showNotification(message, 'error');
+export const showInfo = (message) => showNotification(message, 'info');
+export const showWarning = (message) => showNotification(message, 'warning');
 
-// ==================== EXPORT ====================
+// ============================================================
+// EXPORT
+// ============================================================
 
 export default {
-  register,
-  login,
-  logout,
-  navigateTo,
-  getUrlParams,
-  showSuccess,
-  showError,
-  showInfo,
-  showWarning,
-  showLoading,
-  hideLoading,
-  updateUI,
+    register,
+    login,
+    logout,
+    navigateTo,
+    getUrlParams,
+    showSuccess,
+    showError,
+    showInfo,
+    showWarning,
+    initNavigation
 };
