@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deploy — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        .deploy-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px 60px;
+        }
+        .deploy-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .deploy-status.ready { background: rgba(52,152,219,0.15); color: #3498db; }
+        .deploy-status.deploying { background: rgba(243,156,18,0.15); color: #f39c12; animation: pulse 1s infinite; }
+        .deploy-status.success { background: rgba(46,204,113,0.15); color: #2ecc71; }
+        .deploy-status.failed { background: rgba(231,76,60,0.15); color: #e74c3c; }
+        .deploy-logs {
+            background: #0a0a0a;
+            border: 1px solid rgba(255,0,0,0.06);
+            border-radius: 10px;
+            padding: 16px;
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00ff41;
+            margin-top: 16px;
+        }
+        .deploy-logs .log-line { padding: 2px 0; }
+        .deploy-logs .log-error { color: #ff6b6b; }
+        .deploy-logs .log-success { color: #2ecc71; }
+        .deploy-logs .log-warning { color: #f39c12; }
+        @media (max-width: 768px) {
+            .deploy-container { padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo-wrapper">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-brand">Alpha</span>
+                    <span class="logo-tagline">developers choice</span>
+                </div>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="developers.html">Dashboard</a>
+                <a href="deploy.html" class="active">Deploy</a>
+                <a href="editor.html">Editor</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="deploy-container">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">🚀 Deploy</h1>
+                    <p class="dashboard-subtitle">Deploy your project to the cloud with one click</p>
+                </div>
+                <div>
+                    <span class="deploy-status ready" id="deploy-status">Ready</span>
+                </div>
+            </div>
+
+            <div class="card" style="padding:24px;margin-top:20px;">
+                <div class="form-group">
+                    <label class="form-label">Select Project</label>
+                    <select id="project-select" class="form-control">
+                        <option value="">Select a project...</option>
+                        <option value="1">My Awesome App</option>
+                        <option value="2">API Service</option>
+                        <option value="3">Static Website</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="form-label">Branch</label>
+                    <select id="branch-select" class="form-control">
+                        <option value="main">main</option>
+                        <option value="develop">develop</option>
+                        <option value="staging">staging</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="form-label">Environment</label>
+                    <select id="env-select" class="form-control">
+                        <option value="production">🚀 Production</option>
+                        <option value="staging">🧪 Staging</option>
+                        <option value="development">💻 Development</option>
+                    </select>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+                    <button class="btn btn-success" onclick="startDeploy()" id="deploy-btn">
+                        <i class="fas fa-rocket"></i> Deploy Now
+                    </button>
+                    <button class="btn btn-outline" onclick="addEnvVar()">
+                        <i class="fas fa-plus"></i> Add Env Variable
+                    </button>
+                </div>
+            </div>
+
+            <div class="card" style="padding:20px;margin-top:20px;">
+                <h3 style="font-family:'Black Ops One',cursive;font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:12px;">
+                    <i class="fas fa-terminal"></i> Deployment Logs
+                </h3>
+                <div class="deploy-logs" id="deploy-logs">
+                    <div class="log-line">💻 Waiting for deployment...</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding:20px;margin-top:20px;">
+                <h3 style="font-family:'Black Ops One',cursive;font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:12px;">
+                    <i class="fas fa-history"></i> Deployment History
+                </h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead><tr><th>Version</th><th>Branch</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody id="deploy-history">
+                            <tr><td colspan="5" class="empty-table"><i class="fas fa-inbox"></i> No deployments yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let isDeploying = false;
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('deploy-logs');
+            const line = document.createElement('div');
+            line.className = `log-line log-${type}`;
+            const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+            line.textContent = `${icons[type] || '•'} ${message}`;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function startDeploy() {
+            if (isDeploying) return;
+            const project = document.getElementById('project-select').value;
+            if (!project) {
+                addLog('Please select a project', 'warning');
+                return;
+            }
+
+            isDeploying = true;
+            const btn = document.getElementById('deploy-btn');
+            const status = document.getElementById('deploy-status');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying...';
+            status.className = 'deploy-status deploying';
+            status.textContent = 'Deploying...';
+
+            addLog(`Starting deployment for project: ${project}`, 'info');
+            addLog('Cloning repository...', 'info');
+            
+            let step = 0;
+            const steps = [
+                { msg: 'Installing dependencies...', delay: 1000 },
+                { msg: 'Building project...', delay: 2000 },
+                { msg: 'Running tests...', delay: 1500 },
+                { msg: 'Deploying to servers...', delay: 2000 },
+                { msg: 'Deployment successful! 🎉', delay: 1000, success: true }
+            ];
+
+            function runStep() {
+                if (step < steps.length) {
+                    const s = steps[step];
+                    addLog(s.msg, s.success ? 'success' : 'info');
+                    step++;
+                    setTimeout(runStep, s.delay);
+                } else {
+                    isDeploying = false;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-rocket"></i> Deploy Now';
+                    status.className = 'deploy-status success';
+                    status.textContent = '✅ Success';
+                    
+                    // Add to history
+                    const tbody = document.getElementById('deploy-history');
+                    tbody.innerHTML = `
+                        <tr>
+                            <td><strong>v1.0.0</strong></td>
+                            <td>${document.getElementById('branch-select').value}</td>
+                            <td><span class="status-badge success">Success</span></td>
+                            <td>${new Date().toLocaleString()}</td>
+                            <td><button class="btn btn-sm btn-outline" onclick="viewDeploy()"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                    ` + tbody.innerHTML;
+                }
+            }
+
+            setTimeout(runStep, 500);
+        }
+
+        function addEnvVar() {
+            const key = prompt('Enter environment variable name:');
+            if (!key) return;
+            const value = prompt(`Enter value for ${key}:`);
+            if (!value) return;
+            addLog(`Added environment variable: ${key}=***`, 'success');
+        }
+
+        function viewDeploy() {
+            addLog('Viewing deployment details...', 'info');
+        }
+
+        // Hamburger
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const nav = document.getElementById('nav');
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    nav.classList.toggle('open');
+                });
+                document.querySelectorAll('.nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        nav.classList.remove('open');
+                    });
+                });
+            }
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            });
+            addLog('💡 Select a project and click Deploy Now to start', 'info');
+        });
+    </script>
+</body>
+    </html>
