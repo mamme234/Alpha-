@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Developer Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">
+                <img src="logo.png" alt="Platform Logo" height="40">
+                <span>DevPlatform</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="users.html" class="active">Dashboard</a></li>
+                <li><a href="search.html">Search</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+                <li>
+                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">
+                        🌓
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding:30px 0;">
+        <h1>User Dashboard</h1>
+        <p style="color:var(--gray);">Discover and manage your apps</p>
+
+        <!-- Quick Stats -->
+        <div class="dashboard-stats" id="user-stats">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Featured Apps -->
+        <section style="margin-top:40px;">
+            <h2>⭐ Featured Apps</h2>
+            <div class="card-grid" id="featured-apps">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Recommended Apps -->
+        <section style="margin-top:40px;">
+            <h2>🎯 Recommended for You</h2>
+            <div class="card-grid" id="recommended-apps">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Recent Downloads -->
+        <section style="margin-top:40px;">
+            <h2>📥 Recent Downloads</h2>
+            <div id="recent-downloads">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Favorites -->
+        <section style="margin-top:40px;">
+            <h2>❤️ Your Favorites</h2>
+            <div class="card-grid" id="favorite-apps">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { loadUserDashboard } from './all.js';
+        import { logout, toggleTheme } from './all.js';
+        
+        window.logout = logout;
+        window.toggleTheme = toggleTheme;
+        
+        // Load dashboard on page load
+        document.addEventListener('DOMContentLoaded', loadUserDashboard);
+    </script>
+</body>
+</html>
