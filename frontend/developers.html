@@ -8,6 +8,510 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        /* ============================================================
+           GITHUB-STYLE DASHBOARD
+           ============================================================ */
+        .github-dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px 60px;
+        }
+
+        /* ===== TOP BAR (GitHub-style) ===== */
+        .github-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .github-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .github-topbar-left .repo-icon {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .github-topbar-left h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .github-topbar-left h1 span {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .github-topbar-left .badge-private {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .github-topbar-right {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .github-topbar-right .btn {
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* ===== GITHUB TABS ===== */
+        .github-tabs {
+            display: flex;
+            gap: 2px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .github-tabs .tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .github-tabs .tab:hover {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .github-tabs .tab.active {
+            color: #ffffff;
+            border-bottom-color: #ff0000;
+        }
+
+        .github-tabs .tab .count {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1px 8px;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .github-tabs .tab.active .count {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+        }
+
+        /* ===== GITHUB CONTENT LAYOUT ===== */
+        .github-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* ===== REPO LIST (GitHub-style) ===== */
+        .repo-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .repo-list-header .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 4px 12px;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .repo-list-header .search-box input {
+            background: none;
+            border: none;
+            color: #ffffff;
+            padding: 6px 0;
+            font-size: 13px;
+            outline: none;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .repo-list-header .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .repo-list-header .search-box i {
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        .repo-list-header .filter-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .repo-list-header .filter-btns .btn {
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* ===== REPO ITEM (GitHub-style) ===== */
+        .repo-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .repo-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            margin: 0 -16px;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .repo-item .repo-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .repo-item .repo-name:hover {
+            color: #ff0000;
+        }
+
+        .repo-item .repo-name .repo-icon {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .repo-item .repo-description {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            margin: 4px 0 8px;
+            line-height: 1.5;
+        }
+
+        .repo-item .repo-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .repo-item .repo-meta .lang-color {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        .repo-item .repo-meta .lang-color.js { background: #f1e05a; }
+        .repo-item .repo-meta .lang-color.py { background: #3572A5; }
+        .repo-item .repo-meta .lang-color.ts { background: #2b7489; }
+        .repo-item .repo-meta .lang-color.html { background: #e34c26; }
+        .repo-item .repo-meta .lang-color.css { background: #563d7c; }
+        .repo-item .repo-meta .lang-color.go { background: #00ADD8; }
+        .repo-item .repo-meta .lang-color.rs { background: #dea584; }
+
+        .repo-item .repo-meta .star-btn {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .repo-item .repo-meta .star-btn:hover {
+            color: #ff0000;
+        }
+
+        .repo-item .repo-meta .star-btn.starred {
+            color: #ff0000;
+        }
+
+        .repo-item .repo-meta .update-text {
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== SIDEBAR (GitHub-style) ===== */
+        .github-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .profile-card .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.08);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 2px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .profile-card .name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .profile-card .username {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-card .bio {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 8px 0 12px;
+        }
+
+        .profile-card .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .profile-card .stats-row .stat-item {
+            text-align: center;
+        }
+
+        .profile-card .stats-row .stat-item .num {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .profile-card .stats-row .stat-item .label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Activity Card */
+        .activity-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .activity-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .activity-card .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .activity-card .activity-item .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2ecc71;
+            flex-shrink: 0;
+        }
+
+        .activity-card .activity-item .dot.orange { background: #f39c12; }
+        .activity-card .activity-item .dot.red { background: #e74c3c; }
+        .activity-card .activity-item .dot.blue { background: #3498db; }
+
+        .activity-card .activity-item .text {
+            flex: 1;
+        }
+
+        .activity-card .activity-item .time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        /* Languages Card */
+        .languages-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .languages-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .languages-card .lang-bar {
+            display: flex;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.04);
+            margin-bottom: 12px;
+        }
+
+        .languages-card .lang-bar .segment {
+            height: 100%;
+        }
+
+        .languages-card .lang-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 2px 0;
+        }
+
+        .languages-card .lang-item .lang-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .languages-card .lang-item .lang-label .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .languages-card .lang-item .percentage {
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .github-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .github-dashboard {
+                padding: 16px 20px;
+            }
+
+            .github-topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .github-topbar-right {
+                width: 100%;
+            }
+
+            .github-topbar-right .btn {
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .github-tabs {
+                overflow-x: auto;
+            }
+
+            .github-tabs .tab {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+
+            .repo-list-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .repo-list-header .search-box {
+                max-width: 100%;
+            }
+
+            .repo-list-header .filter-btns {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .github-dashboard {
+                padding: 12px 12px 40px;
+            }
+
+            .github-topbar-left h1 {
+                font-size: 16px;
+            }
+
+            .github-tabs .tab {
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+
+            .repo-item .repo-meta {
+                font-size: 11px;
+                gap: 10px;
+            }
+
+            .profile-card .stats-row {
+                gap: 16px;
+            }
+
+            .profile-card .stats-row .stat-item .num {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
@@ -55,152 +559,268 @@
         </div>
     </header>
 
-    <!-- ===== PAGE CONTENT ===== -->
+    <!-- ===== GITHUB-STYLE DASHBOARD ===== -->
     <main class="page-content">
-        <div class="dashboard-container">
-            
-            <!-- Dashboard Header -->
-            <div class="dashboard-header">
-                <div>
-                    <h1 class="dashboard-title">Developer Dashboard</h1>
-                    <p class="dashboard-subtitle">Manage your projects, deployments, and apps</p>
-                </div>
-                <div class="dashboard-actions">
-                    <a href="editor.html?new=true" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> New Project
-                    </a>
-                    <a href="publish.html" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-upload"></i> Publish App
-                    </a>
-                    <a href="deploy.html" class="btn btn-outline btn-sm">
-                        <i class="fas fa-rocket"></i> Deploy
-                    </a>
-                </div>
-            </div>
+        <div class="github-dashboard">
 
-            <!-- Stats -->
-            <div class="dashboard-stats" id="dev-stats">
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">📁 Projects</div>
+            <!-- Top Bar -->
+            <div class="github-topbar">
+                <div class="github-topbar-left">
+                    <span class="repo-icon"><i class="fas fa-code-fork"></i></span>
+                    <h1>Alpha<span>/</span>Projects</h1>
+                    <span class="badge-private">Private</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">🚀 Deployments</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">📱 Apps</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">📥 Downloads</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">0 MB</div>
-                    <div class="stat-label">💾 Storage</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">0%</div>
-                    <div class="stat-label">⚡ CPU</div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="quick-action-card" onclick="window.location.href='editor.html?new=true'">
-                    <i class="fas fa-code"></i>
-                    <span>New Project</span>
-                </div>
-                <div class="quick-action-card" onclick="window.location.href='publish.html'">
-                    <i class="fas fa-upload"></i>
-                    <span>Publish App</span>
-                </div>
-                <div class="quick-action-card" onclick="window.location.href='deploy.html'">
-                    <i class="fas fa-rocket"></i>
-                    <span>Deploy</span>
-                </div>
-                <div class="quick-action-card" onclick="window.location.href='analytics.html'">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </div>
-            </div>
-
-            <!-- Projects -->
-            <section class="dashboard-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-folder"></i> Your Projects</h2>
-                    <a href="editor.html?new=true" class="btn btn-primary btn-sm">
+                <div class="github-topbar-right">
+                    <button class="btn btn-success btn-sm" onclick="window.location.href='editor.html?new=true'">
                         <i class="fas fa-plus"></i> New
-                    </a>
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="window.location.href='publish.html'">
+                        <i class="fas fa-upload"></i> Publish
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="window.location.href='deploy.html'">
+                        <i class="fas fa-rocket"></i> Deploy
+                    </button>
                 </div>
-                <div class="projects-grid" id="dev-projects">
-                    <div class="empty-state">
-                        <i class="fas fa-folder-open"></i>
-                        <h3>No Projects Yet</h3>
-                        <p>Create your first project to start building</p>
-                        <a href="editor.html?new=true" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Create Project
-                        </a>
-                    </div>
-                </div>
-            </section>
+            </div>
 
-            <!-- Recent Deployments -->
-            <section class="dashboard-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-clock"></i> Recent Deployments</h2>
-                    <a href="deploy.html" class="btn btn-outline btn-sm">View All</a>
+            <!-- Tabs -->
+            <div class="github-tabs">
+                <div class="tab active" onclick="switchTab('repositories')">
+                    <i class="fas fa-book"></i> Repositories
+                    <span class="count">12</span>
                 </div>
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th>Version</th>
-                                <th>Branch</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recent-deployments">
-                            <tr>
-                                <td colspan="6" class="empty-table">
-                                    <i class="fas fa-inbox"></i> No deployments yet
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="tab" onclick="switchTab('deployments')">
+                    <i class="fas fa-rocket"></i> Deployments
+                    <span class="count">8</span>
                 </div>
-            </section>
+                <div class="tab" onclick="switchTab('apps')">
+                    <i class="fas fa-th-large"></i> Published Apps
+                    <span class="count">5</span>
+                </div>
+                <div class="tab" onclick="switchTab('activity')">
+                    <i class="fas fa-clock"></i> Activity
+                </div>
+            </div>
 
-            <!-- Published Apps -->
-            <section class="dashboard-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-th-large"></i> Published Apps</h2>
-                    <a href="publish.html" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> Publish
-                    </a>
-                </div>
-                <div class="card-grid" id="published-apps">
-                    <div class="empty-state">
-                        <i class="fas fa-th-large"></i>
-                        <h3>No Published Apps</h3>
-                        <p>Publish your first app to the marketplace</p>
-                        <a href="publish.html" class="btn btn-primary">
-                            <i class="fas fa-upload"></i> Publish App
-                        </a>
+            <!-- Content -->
+            <div class="github-content">
+
+                <!-- Left Column - Repo List -->
+                <div>
+
+                    <!-- Repo List Header -->
+                    <div class="repo-list-header">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Find a repository..." id="repo-search" oninput="filterRepos()">
+                        </div>
+                        <div class="filter-btns">
+                            <button class="btn btn-outline btn-sm" onclick="filterRepos('all')" id="filter-all">All</button>
+                            <button class="btn btn-outline btn-sm" onclick="filterRepos('public')" id="filter-public">Public</button>
+                            <button class="btn btn-outline btn-sm" onclick="filterRepos('private')" id="filter-private">Private</button>
+                        </div>
                     </div>
+
+                    <!-- Repository List -->
+                    <div id="repo-list">
+                        <div class="repo-item" data-type="private">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-lock"></i></span>
+                                awesome-app
+                            </div>
+                            <div class="repo-description">A full-stack application for managing developer projects with real-time collaboration features.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color js"></span> JavaScript</span>
+                                <span><i class="fas fa-code-branch"></i> 4 branches</span>
+                                <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 12</span>
+                                <span class="update-text">Updated 2 hours ago</span>
+                            </div>
+                        </div>
+
+                        <div class="repo-item" data-type="public">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-globe"></i></span>
+                                dev-tools-pro
+                            </div>
+                            <div class="repo-description">Collection of developer tools and utilities for everyday coding tasks.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color ts"></span> TypeScript</span>
+                                <span><i class="fas fa-code-branch"></i> 6 branches</span>
+                                <span class="star-btn starred" onclick="toggleStar(this)"><i class="fas fa-star"></i> 45</span>
+                                <span class="update-text">Updated 1 day ago</span>
+                            </div>
+                        </div>
+
+                        <div class="repo-item" data-type="private">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-lock"></i></span>
+                                api-gateway
+                            </div>
+                            <div class="repo-description">High-performance API gateway with rate limiting, authentication, and request routing.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color go"></span> Go</span>
+                                <span><i class="fas fa-code-branch"></i> 3 branches</span>
+                                <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 8</span>
+                                <span class="update-text">Updated 3 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="repo-item" data-type="public">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-globe"></i></span>
+                                portfolio-website
+                            </div>
+                            <div class="repo-description">Personal portfolio website built with React and Tailwind CSS.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color html"></span> HTML</span>
+                                <span><span class="lang-color css"></span> CSS</span>
+                                <span><i class="fas fa-code-branch"></i> 2 branches</span>
+                                <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 3</span>
+                                <span class="update-text">Updated 5 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="repo-item" data-type="private">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-lock"></i></span>
+                                ml-pipeline
+                            </div>
+                            <div class="repo-description">Machine learning pipeline for data processing, model training, and deployment.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color py"></span> Python</span>
+                                <span><i class="fas fa-code-branch"></i> 5 branches</span>
+                                <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 6</span>
+                                <span class="update-text">Updated 1 week ago</span>
+                            </div>
+                        </div>
+
+                        <div class="repo-item" data-type="public">
+                            <div class="repo-name">
+                                <span class="repo-icon"><i class="fas fa-globe"></i></span>
+                                rust-playground
+                            </div>
+                            <div class="repo-description">Experimental projects and learning exercises in Rust programming language.</div>
+                            <div class="repo-meta">
+                                <span><span class="lang-color rs"></span> Rust</span>
+                                <span><i class="fas fa-code-branch"></i> 3 branches</span>
+                                <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 2</span>
+                                <span class="update-text">Updated 2 weeks ago</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            </section>
+
+                <!-- Right Column - Sidebar -->
+                <div class="github-sidebar">
+
+                    <!-- Profile Card -->
+                    <div class="profile-card">
+                        <div class="avatar">👤</div>
+                        <div class="name">Muhammad Ilyas</div>
+                        <div class="username">@muhammadilyas</div>
+                        <div class="bio">Full-stack developer | Building amazing things 🚀</div>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="num">12</div>
+                                <div class="label">Repos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="num">45</div>
+                                <div class="label">Stars</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="num">8</div>
+                                <div class="label">Followers</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="num">12</div>
+                                <div class="label">Following</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Card -->
+                    <div class="activity-card">
+                        <h4><i class="fas fa-clock"></i> Recent Activity</h4>
+                        <div class="activity-item">
+                            <span class="dot"></span>
+                            <span class="text">Pushed to <strong style="color:#fff;">awesome-app</strong></span>
+                            <span class="time">2h</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="dot orange"></span>
+                            <span class="text">Created branch <strong style="color:#fff;">feature-auth</strong></span>
+                            <span class="time">5h</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="dot blue"></span>
+                            <span class="text">Opened issue in <strong style="color:#fff;">api-gateway</strong></span>
+                            <span class="time">1d</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="dot red"></span>
+                            <span class="text">Merged PR in <strong style="color:#fff;">dev-tools-pro</strong></span>
+                            <span class="time">2d</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="dot"></span>
+                            <span class="text">Starred <strong style="color:#fff;">rust-playground</strong></span>
+                            <span class="time">3d</span>
+                        </div>
+                    </div>
+
+                    <!-- Languages Card -->
+                    <div class="languages-card">
+                        <h4><i class="fas fa-code"></i> Top Languages</h4>
+                        <div class="lang-bar">
+                            <div class="segment" style="width:35%;background:#f1e05a;"></div>
+                            <div class="segment" style="width:25%;background:#2b7489;"></div>
+                            <div class="segment" style="width:20%;background:#3572A5;"></div>
+                            <div class="segment" style="width:12%;background:#00ADD8;"></div>
+                            <div class="segment" style="width:8%;background:#dea584;"></div>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-label">
+                                <span class="color-dot" style="background:#f1e05a;"></span> JavaScript
+                            </span>
+                            <span class="percentage">35%</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-label">
+                                <span class="color-dot" style="background:#2b7489;"></span> TypeScript
+                            </span>
+                            <span class="percentage">25%</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-label">
+                                <span class="color-dot" style="background:#3572A5;"></span> Python
+                            </span>
+                            <span class="percentage">20%</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-label">
+                                <span class="color-dot" style="background:#00ADD8;"></span> Go
+                            </span>
+                            <span class="percentage">12%</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-label">
+                                <span class="color-dot" style="background:#dea584;"></span> Rust
+                            </span>
+                            <span class="percentage">8%</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
     </main>
 
     <script>
         // ============================================================
-        // SIMPLE LOGOUT
+        // LOGOUT
         // ============================================================
         function logout() {
             localStorage.removeItem('authToken');
@@ -209,7 +829,175 @@
         }
 
         // ============================================================
-        // HAMBURGER
+        // STAR TOGGLE (GitHub-style)
+        // ============================================================
+        function toggleStar(el) {
+            el.classList.toggle('starred');
+            const icon = el.querySelector('i');
+            const count = parseInt(el.textContent.trim()) || 0;
+            if (el.classList.contains('starred')) {
+                icon.className = 'fas fa-star';
+                el.innerHTML = `<i class="fas fa-star"></i> ${count + 1}`;
+            } else {
+                icon.className = 'far fa-star';
+                el.innerHTML = `<i class="far fa-star"></i> ${count - 1}`;
+            }
+        }
+
+        // ============================================================
+        // TAB SWITCHING
+        // ============================================================
+        function switchTab(tab) {
+            document.querySelectorAll('.github-tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.github-tabs .tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+            const repoList = document.getElementById('repo-list');
+
+            if (tab === 'repositories') {
+                repoList.innerHTML = `
+                    <div class="repo-item" data-type="private">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-lock"></i></span>awesome-app</div>
+                        <div class="repo-description">A full-stack application for managing developer projects with real-time collaboration features.</div>
+                        <div class="repo-meta">
+                            <span><span class="lang-color js"></span> JavaScript</span>
+                            <span><i class="fas fa-code-branch"></i> 4 branches</span>
+                            <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 12</span>
+                            <span class="update-text">Updated 2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="repo-item" data-type="public">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-globe"></i></span>dev-tools-pro</div>
+                        <div class="repo-description">Collection of developer tools and utilities for everyday coding tasks.</div>
+                        <div class="repo-meta">
+                            <span><span class="lang-color ts"></span> TypeScript</span>
+                            <span><i class="fas fa-code-branch"></i> 6 branches</span>
+                            <span class="star-btn starred" onclick="toggleStar(this)"><i class="fas fa-star"></i> 45</span>
+                            <span class="update-text">Updated 1 day ago</span>
+                        </div>
+                    </div>
+                    <div class="repo-item" data-type="private">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-lock"></i></span>api-gateway</div>
+                        <div class="repo-description">High-performance API gateway with rate limiting, authentication, and request routing.</div>
+                        <div class="repo-meta">
+                            <span><span class="lang-color go"></span> Go</span>
+                            <span><i class="fas fa-code-branch"></i> 3 branches</span>
+                            <span class="star-btn" onclick="toggleStar(this)"><i class="far fa-star"></i> 8</span>
+                            <span class="update-text">Updated 3 days ago</span>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'deployments') {
+                repoList.innerHTML = `
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-rocket"></i></span>Production Deployment</div>
+                        <div class="repo-description">v2.3.0 • Deployed successfully to production servers.</div>
+                        <div class="repo-meta">
+                            <span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Success</span>
+                            <span class="update-text">2 hours ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="viewDeployment()">View</button>
+                        </div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-rocket"></i></span>Staging Deployment</div>
+                        <div class="repo-description">v2.3.0-rc • Deployed to staging environment for testing.</div>
+                        <div class="repo-meta">
+                            <span style="color:#f39c12;"><i class="fas fa-spinner fa-spin"></i> In Progress</span>
+                            <span class="update-text">45 minutes ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="viewDeployment()">View</button>
+                        </div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-rocket"></i></span>Rollback Deployment</div>
+                        <div class="repo-description">v2.2.5 • Rolled back due to issues in v2.3.0.</div>
+                        <div class="repo-meta">
+                            <span style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Failed</span>
+                            <span class="update-text">1 day ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="viewDeployment()">View</button>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'apps') {
+                repoList.innerHTML = `
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-th-large"></i></span>Awesome App</div>
+                        <div class="repo-description">Productivity app with 1.2K downloads • ⭐ 4.9</div>
+                        <div class="repo-meta">
+                            <span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Published</span>
+                            <span class="update-text">2 weeks ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="window.location.href='app.html'">View</button>
+                        </div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-th-large"></i></span>Dev Tools Pro</div>
+                        <div class="repo-description">Developer tools with 856 downloads • ⭐ 4.7</div>
+                        <div class="repo-meta">
+                            <span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Published</span>
+                            <span class="update-text">1 month ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="window.location.href='app.html'">View</button>
+                        </div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-th-large"></i></span>API Manager</div>
+                        <div class="repo-description">API management tool with 342 downloads • ⭐ 4.5</div>
+                        <div class="repo-meta">
+                            <span style="color:#f39c12;"><i class="fas fa-clock"></i> Draft</span>
+                            <span class="update-text">2 months ago</span>
+                            <button class="btn btn-outline btn-sm" onclick="window.location.href='publish.html'">Publish</button>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'activity') {
+                repoList.innerHTML = `
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-code-commit"></i></span>Commit: Add authentication module</div>
+                        <div class="repo-description">Pushed to <strong style="color:#fff;">awesome-app</strong> • 3 commits</div>
+                        <div class="repo-meta"><span class="update-text">2 hours ago</span></div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-code-branch"></i></span>Created branch: feature-auth</div>
+                        <div class="repo-description">New branch from main in <strong style="color:#fff;">dev-tools-pro</strong></div>
+                        <div class="repo-meta"><span class="update-text">5 hours ago</span></div>
+                    </div>
+                    <div class="repo-item">
+                        <div class="repo-name"><span class="repo-icon"><i class="fas fa-code-commit"></i></span>Merge pull request #42</div>
+                        <div class="repo-description">Merged PR <strong style="color:#fff;">api-gateway</strong> • Fixed rate limiting</div>
+                        <div class="repo-meta"><span class="update-text">1 day ago</span></div>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // VIEW DEPLOYMENT
+        // ============================================================
+        function viewDeployment() {
+            window.location.href = 'deploy.html';
+        }
+
+        // ============================================================
+        // FILTER REPOS
+        // ============================================================
+        function filterRepos(type) {
+            document.querySelectorAll('.filter-btns .btn').forEach(b => b.className = 'btn btn-outline btn-sm');
+            if (type) {
+                document.getElementById(`filter-${type}`).className = 'btn btn-primary btn-sm';
+            } else {
+                document.getElementById('filter-all').className = 'btn btn-primary btn-sm';
+            }
+
+            const items = document.querySelectorAll('.repo-item');
+            const search = document.getElementById('repo-search').value.toLowerCase();
+
+            items.forEach(item => {
+                const name = item.querySelector('.repo-name').textContent.toLowerCase();
+                const typeMatch = !type || type === 'all' || item.dataset.type === type;
+                const searchMatch = name.includes(search);
+                item.style.display = (typeMatch && searchMatch) ? 'block' : 'none';
+            });
+        }
+
+        // ============================================================
+        // HAMBURGER & SCROLL
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             const hamburger = document.getElementById('hamburger');
@@ -229,7 +1017,6 @@
                 });
             }
 
-            // Scroll effect
             const header = document.getElementById('header');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 20) {
@@ -241,4 +1028,4 @@
         });
     </script>
 </body>
-                    </html>
+    </html>
