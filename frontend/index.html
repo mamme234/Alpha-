@@ -1,206 +1,149 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Platform - Build, Deploy & Discover Apps</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alpha — Developer Platform</title>
     
-    <!-- SEO & Security Meta Tags -->
-    <meta name="description" content="Developer Platform - All-in-one ecosystem where developers build, deploy, and publish apps, and users discover and use them.">
-    <meta name="keywords" content="developer platform, build apps, deploy apps, publish apps, software development, coding platform">
-    <meta name="author" content="Developer Platform">
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
-    
-    <!-- Security Headers -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="Developer Platform">
-    <meta property="og:description" content="Build, deploy, and discover amazing applications">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://alpha-g2z9.vercel.app">
-    <meta property="og:image" content="/logo.png">
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#6c63ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <!-- ===== IMPORTS ===== -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json">
-    <link rel="canonical" href="https://alpha-g2z9.vercel.app">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="navbar-brand">
-                <img src="logo.png" alt="Platform Logo" height="40">
-                <span>DevPlatform</span>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-gradient"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <div class="header-bg"></div>
+        <div class="header-inner">
+
+            <!-- Header Logo -->
+            <a href="index.html" class="logo-wrapper" id="logoLink">
+
+                <!-- Logo Mark -->
+                <div class="logo-mark">
+                    <div class="ring-glow"></div>
+
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Shadow -->
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z"
+                        stroke="#440000" stroke-width="5" opacity="0.2" />
+
+                        <!-- Main A -->
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+
+                        <!-- Crossbar -->
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+
+                        <!-- Horns -->
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+
+                        <!-- Eye -->
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+
+                        <!-- Fangs -->
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+
+                        <!-- Fill -->
+                        <path class="logo-svg-fill" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+
+                        <!-- Cracks -->
+                        <path class="logo-svg-crack" d="M 50 38 L 50 56" />
+                        <path class="logo-svg-crack" d="M 36 46 L 44 50" />
+                        <path class="logo-svg-crack" d="M 64 46 L 56 50" />
+
+                        <!-- Corner dots -->
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+
+                <!-- Logo Text -->
+                <div class="logo-text">
+                    <span class="logo-brand">Alpha</span>
+                    <span class="logo-tagline">developers choice</span>
+                </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="search.html">Search</a></li>
-                <li><a href="choose.html" data-guest>Get Started</a></li>
-                <li><a href="login.html" data-guest>Login</a></li>
-                <li><a href="users.html" data-auth>Dashboard</a></li>
-                <li><a href="#" onclick="logout()" data-auth>Logout</a></li>
-                <li>
-                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">
-                        🌓
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="section hero" style="text-align:center;padding:100px 0;background:linear-gradient(135deg,#6c63ff,#ff6584);color:white;">
-        <div class="container">
-            <h1 style="font-size:3.5rem;margin-bottom:20px;">
-                Build, Deploy, and Discover
-                <br>
-                <span class="gradient-text" style="background:linear-gradient(135deg,#fff,#f0f0f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-                    Amazing Applications
-                </span>
+            <!-- Navigation -->
+            <nav class="nav" id="nav">
+                <a href="index.html" class="active">Home</a>
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
+                <a href="#">Docs</a>
+                <a href="choose.html" class="nav-cta">Get Started</a>
+            </nav>
+
+            <!-- Hamburger -->
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        
+        <!-- ===== ENTRY LOGO SECTION ===== -->
+        <section class="entry-logo-section">
+            <div class="container">
+                <!-- Load logo.html here -->
+                <div id="entry-logo-container"></div>
+            </div>
+        </section>
+
+        <!-- ===== HERO SECTION ===== -->
+        <section class="hero">
+            <h1 class="fade-in-up">
+                Welcome to <span class="highlight">Alpha</span>
             </h1>
-            <p style="font-size:1.2rem;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto;">
-                The all-in-one platform for developers to build and deploy apps,
-                and for users to discover and use them.
+            <p class="fade-in-up delay-1">
+                The ultimate developer platform built for speed, security,
+                and scalability. <br />Venom-inspired design, symbiote-grade performance.
             </p>
-            <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
-                <a href="choose.html" class="btn" style="background:white;color:#6c63ff;padding:14px 40px;border-radius:12px;font-weight:600;text-decoration:none;">Get Started</a>
-                <a href="search.html" class="btn" style="border:2px solid white;color:white;padding:14px 40px;border-radius:12px;font-weight:600;text-decoration:none;">Explore Apps</a>
+            <div class="hero-buttons fade-in-up delay-2">
+                <a href="choose.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i> Start Building
+                </a>
+                <a href="#" class="btn-secondary">
+                    <i class="fas fa-book"></i> Read Docs
+                </a>
             </div>
-        </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="section" style="background:var(--lighter);">
-        <div class="container">
-            <h2 class="section-title" style="text-align:center;width:100%;">Why Choose DevPlatform?</h2>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin-top:40px;">
-                <div class="card" style="padding:30px;text-align:center;">
-                    <div style="font-size:3rem;margin-bottom:15px;">🚀</div>
-                    <h3>One-Click Deploy</h3>
-                    <p style="color:var(--gray);">Deploy your projects instantly with a single click. No configuration needed.</p>
+            <!-- Stats -->
+            <div class="stats fade-in-up delay-3">
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Developers</div>
                 </div>
-                <div class="card" style="padding:30px;text-align:center;">
-                    <div style="font-size:3rem;margin-bottom:15px;">💻</div>
-                    <h3>Online Editor</h3>
-                    <p style="color:var(--gray);">Write, edit, and manage your code directly in the browser with syntax highlighting.</p>
+                <div class="stat-item">
+                    <div class="stat-number">5K+</div>
+                    <div class="stat-label">Apps Deployed</div>
                 </div>
-                <div class="card" style="padding:30px;text-align:center;">
-                    <div style="font-size:3rem;margin-bottom:15px;">📱</div>
-                    <h3>App Publishing</h3>
-                    <p style="color:var(--gray);">Publish your apps to the marketplace and reach thousands of users.</p>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
                 </div>
-                <div class="card" style="padding:30px;text-align:center;">
-                    <div style="font-size:3rem;margin-bottom:15px;">📊</div>
-                    <h3>Analytics</h3>
-                    <p style="color:var(--gray);">Track downloads, users, and engagement with detailed analytics.</p>
+                <div class="stat-item">
+                    <div class="stat-number">4.9⭐</div>
+                    <div class="stat-label">User Rating</div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Featured Apps -->
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">⭐ Featured Apps</h2>
-            <div class="card-grid" id="featured-apps">
-                <!-- Loaded dynamically -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Categories -->
-    <section class="section" style="background:var(--lighter);">
-        <div class="container">
-            <h2 class="section-title">📂 Categories</h2>
-            <div class="categories-grid" id="categories-grid">
-                <!-- Loaded dynamically -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Trending -->
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">🔥 Trending Now</h2>
-            <div class="card-grid" id="trending-apps">
-                <!-- Loaded dynamically -->
-            </div>
-        </div>
-    </section>
-
-    <!-- New Releases -->
-    <section class="section" style="background:var(--lighter);">
-        <div class="container">
-            <h2 class="section-title">🚀 New Releases</h2>
-            <div class="card-grid" id="new-releases">
-                <!-- Loaded dynamically -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="section" style="background:linear-gradient(135deg,#2d3436,#1a1a2e);color:white;text-align:center;">
-        <div class="container">
-            <h2 style="font-size:2.5rem;margin-bottom:20px;">Ready to Build Something Great?</h2>
-            <p style="font-size:1.1rem;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto;">
-                Join thousands of developers already building and deploying on our platform.
-            </p>
-            <a href="choose.html" class="btn" style="background:#6c63ff;color:white;padding:14px 40px;border-radius:12px;font-weight:600;text-decoration:none;">Start Building Now</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="background:#1a1a2e;color:#dfe6e9;padding:60px 0;margin-top:0;">
-        <div class="container">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;">
-                <div>
-                    <h4 style="color:white;margin-bottom:15px;">DevPlatform</h4>
-                    <p style="font-size:0.9rem;opacity:0.7;">Build, deploy, and discover amazing applications.</p>
-                    <p style="font-size:0.9rem;opacity:0.7;margin-top:10px;">© 2026 DevPlatform. All rights reserved.</p>
-                </div>
-                <div>
-                    <h4 style="color:white;margin-bottom:15px;">Product</h4>
-                    <ul style="list-style:none;padding:0;">
-                        <li style="margin-bottom:8px;"><a href="search.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Explore Apps</a></li>
-                        <li style="margin-bottom:8px;"><a href="publish.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Publish</a></li>
-                        <li style="margin-bottom:8px;"><a href="developers.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Developer Hub</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="color:white;margin-bottom:15px;">Legal</h4>
-                    <ul style="list-style:none;padding:0;">
-                        <li style="margin-bottom:8px;"><a href="privacy.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Privacy Policy</a></li>
-                        <li style="margin-bottom:8px;"><a href="terms.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Terms of Service</a></li>
-                        <li style="margin-bottom:8px;"><a href="#" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Cookie Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="color:white;margin-bottom:15px;">Company</h4>
-                    <ul style="list-style:none;padding:0;">
-                        <li style="margin-bottom:8px;"><a href="about.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">About</a></li>
-                        <li style="margin-bottom:8px;"><a href="contact.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Contact</a></li>
-                        <li style="margin-bottom:8px;"><a href="support.html" style="color:#dfe6e9;text-decoration:none;opacity:0.7;">Support</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr style="border-color:#2d2d44;margin:30px 0;">
-            <p style="text-align:center;color:#636e72;font-size:0.9rem;">
-                Made with ❤️ by the DevPlatform Team
-            </p>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
+    <!-- ===== JAVASCRIPT (all in main.js and all.js) ===== -->
     <script type="module" src="main.js"></script>
 </body>
-                                     </html>
+</html>
