@@ -1,24 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
-    <div class="container" style="max-width:500px;margin:60px auto;">
-        <div style="text-align:center;margin-bottom:30px;">
-            <a href="index.html">
-                <img src="logo.png" alt="Platform Logo" height="50" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>'">
-            </a>
-            <h1 style="margin-top:20px;">Create Your Account</h1>
-            <p style="color:var(--gray);">Join the developer ecosystem</p>
-        </div>
+    <div class="bg-gradient"></div>
+    <div class="symbiote-particle"></div>
+    <div class="symbiote-particle"></div>
+    <div class="glitch-line"></div>
+    <div class="glitch-line"></div>
 
-        <div class="card" style="padding:40px;">
-            <form id="signup-form" onsubmit="handleSignup(event)">
+    <div class="auth-page">
+        <div class="auth-container" style="max-width:500px;">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <div class="auth-logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <span class="auth-logo-text">Alpha</span>
+                <span class="auth-logo-version">v3.0</span>
+            </div>
+
+            <h1 class="auth-title">Create Your Account</h1>
+            <p class="auth-subtitle">Join the developer ecosystem</p>
+
+            <form id="signup-form" onsubmit="handleSignup(event)" class="auth-form">
                 <div class="form-group">
                     <label class="form-label">Username</label>
                     <input type="text" id="username" class="form-control" placeholder="Choose a username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+">
@@ -43,14 +67,16 @@
 
                 <div class="form-group">
                     <label class="form-label">Account Type</label>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;">
-                        <button type="button" class="btn btn-primary" id="role-user" onclick="selectRole('user')" style="width:100%;">
-                            👤 User
-                            <br><small style="font-weight:normal;">Discover & use apps</small>
+                    <div class="role-selector">
+                        <button type="button" class="role-btn active" id="role-user" onclick="selectRole('user')">
+                            <i class="fas fa-user"></i>
+                            <span>User</span>
+                            <small>Discover & use apps</small>
                         </button>
-                        <button type="button" class="btn btn-outline" id="role-developer" onclick="selectRole('developer')" style="width:100%;">
-                            👨‍💻 Developer
-                            <br><small style="font-weight:normal;">Build & publish apps</small>
+                        <button type="button" class="role-btn" id="role-developer" onclick="selectRole('developer')">
+                            <i class="fas fa-code"></i>
+                            <span>Developer</span>
+                            <small>Build & publish apps</small>
                         </button>
                     </div>
                     <input type="hidden" id="role" value="user">
@@ -59,47 +85,36 @@
                 <div class="form-check">
                     <input type="checkbox" id="terms" required>
                     <label for="terms">
-                        I agree to the <a href="terms.html" style="color:var(--primary);">Terms of Service</a> and 
-                        <a href="privacy.html" style="color:var(--primary);">Privacy Policy</a>
+                        I agree to the <a href="terms.html" class="auth-link-highlight">Terms of Service</a> and 
+                        <a href="privacy.html" class="auth-link-highlight">Privacy Policy</a>
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:1.1rem;margin-top:10px;" id="signup-btn">
-                    Create Account
+                <button type="submit" class="btn btn-primary btn-full" id="signup-btn">
+                    <i class="fas fa-user-plus"></i> Create Account
                 </button>
             </form>
 
-            <div style="text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--light-gray);">
-                <p>Already have an account? <a href="login.html" style="color:var(--primary);font-weight:600;">Sign In</a></p>
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html" class="auth-link-highlight">Sign In</a></p>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { register, showError, showSuccess, navigateTo } from './all.js';
+        import { register, showError, showSuccess } from './all.js';
 
-        // Make functions available globally
         window.register = register;
         window.showError = showError;
         window.showSuccess = showSuccess;
-        window.navigateTo = navigateTo;
 
         let selectedRole = 'user';
 
         window.selectRole = (role) => {
             selectedRole = role;
             document.getElementById('role').value = role;
-            
-            const userBtn = document.getElementById('role-user');
-            const devBtn = document.getElementById('role-developer');
-            
-            if (role === 'user') {
-                userBtn.className = 'btn btn-primary';
-                devBtn.className = 'btn btn-outline';
-            } else {
-                userBtn.className = 'btn btn-outline';
-                devBtn.className = 'btn btn-primary';
-            }
+            document.getElementById('role-user').className = `role-btn ${role === 'user' ? 'active' : ''}`;
+            document.getElementById('role-developer').className = `role-btn ${role === 'developer' ? 'active' : ''}`;
         };
 
         window.handleSignup = async (event) => {
@@ -112,97 +127,48 @@
             const role = document.getElementById('role').value;
             const terms = document.getElementById('terms').checked;
             
-            // Validate username
             if (!username || username.length < 3) {
                 showError('Username must be at least 3 characters');
                 return;
             }
             
-            // Validate email
             if (!email || !email.includes('@')) {
                 showError('Please enter a valid email address');
                 return;
             }
             
-            // Validate password
             if (password.length < 8) {
                 showError('Password must be at least 8 characters');
                 return;
             }
             
-            // Validate confirm password
             if (password !== confirmPassword) {
                 showError('Passwords do not match');
                 return;
             }
             
-            // Validate terms
             if (!terms) {
-                showError('Please agree to the Terms of Service and Privacy Policy');
+                showError('Please agree to the Terms of Service');
                 return;
             }
             
-            // Disable button to prevent double submission
             const btn = document.getElementById('signup-btn');
             btn.disabled = true;
-            btn.textContent = 'Creating Account...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
             
             try {
-                console.log('📤 Submitting registration for:', email);
-                
-                const result = await register({ 
-                    username, 
-                    email, 
-                    password, 
-                    role: role || 'user' 
-                });
-                
-                console.log('✅ Registration successful:', result);
-                
-                showSuccess('Account created successfully! Please check your email to verify your account.');
-                
-                // Reset form
-                document.getElementById('signup-form').reset();
-                
-                // Redirect to login after 3 seconds
-                setTimeout(() => {
-                    navigateTo('login');
-                }, 3000);
-                
+                await register({ username, email, password, role: role || 'user' });
             } catch (error) {
-                console.error('❌ Registration error:', error);
                 showError(error.message || 'Registration failed. Please try again.');
-                
-                // Re-enable button
+            } finally {
                 btn.disabled = false;
-                btn.textContent = 'Create Account';
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
             }
         };
 
-        // Initialize role selection on page load
         document.addEventListener('DOMContentLoaded', () => {
             selectRole('user');
-            
-            // Add validation feedback
-            const passwordInput = document.getElementById('password');
-            const confirmInput = document.getElementById('confirm-password');
-            
-            confirmInput.addEventListener('input', () => {
-                if (passwordInput.value && confirmInput.value) {
-                    if (passwordInput.value !== confirmInput.value) {
-                        confirmInput.style.borderColor = '#e74c3c';
-                    } else {
-                        confirmInput.style.borderColor = '#2ecc71';
-                    }
-                }
-            });
-        });
-
-        // Global error handler for unhandled promises
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled rejection:', event.reason);
-            showError('An unexpected error occurred. Please try again.');
         });
     </script>
 </body>
-        </html>
+    </html>
