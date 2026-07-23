@@ -1,7 +1,7 @@
 // backend/routes.js - Complete updated file
 import express from 'express';
 import { authController, userController, developerController, adminController } from './controllers.js';
-import { authenticate, authorize, upload, validate, rateLimitUser } from './middleware.js';
+import { authenticate, authorize } from './middleware.js';
 
 const router = express.Router();
 
@@ -26,14 +26,14 @@ router.post('/auth/login', authController.login);
 router.post('/auth/logout', authenticate, authController.logout);
 router.post('/auth/refresh', authController.refreshToken);
 router.get('/auth/me', authenticate, authController.me);
-router.post('/auth/verify-email', authController.verifyEmail);
-router.post('/auth/request-password-reset', authController.requestPasswordReset);
-router.post('/auth/reset-password', authController.resetPassword);
 router.post('/auth/change-password', authenticate, authController.changePassword);
 router.post('/auth/toggle-2fa', authenticate, authController.toggle2FA);
 router.get('/auth/sessions', authenticate, authController.getSessions);
 router.delete('/auth/sessions/:sessionId', authenticate, authController.revokeSession);
 router.delete('/auth/delete-account', authenticate, authController.deleteAccount);
+router.post('/auth/verify-email', authController.verifyEmail);
+router.post('/auth/request-password-reset', authController.requestPasswordReset);
+router.post('/auth/reset-password', authController.resetPassword);
 
 // ==================== USER ROUTES ====================
 router.get('/users/dashboard', authenticate, userController.getDashboard);
@@ -48,7 +48,6 @@ router.put('/users/notifications/:notificationId', authenticate, userController.
 router.put('/users/notifications/mark-all-read', authenticate, userController.markAllNotificationsRead);
 router.delete('/users/notifications/clear-all', authenticate, userController.clearAllNotifications);
 router.put('/users/profile', authenticate, userController.updateProfile);
-router.post('/users/avatar', authenticate, upload.single('avatar'), userController.updateProfile);
 router.put('/users/notification-settings', authenticate, userController.updateNotificationSettings);
 router.put('/users/privacy-settings', authenticate, userController.updatePrivacySettings);
 router.get('/users/export-data', authenticate, userController.exportData);
@@ -61,10 +60,7 @@ router.get('/developers/projects/:projectId', authenticate, authorize('developer
 router.put('/developers/projects/:projectId', authenticate, authorize('developer', 'admin'), developerController.updateProject);
 router.delete('/developers/projects/:projectId', authenticate, authorize('developer', 'admin'), developerController.deleteProject);
 router.get('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.getProjectFiles);
-router.get('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.getProjectFile);
 router.post('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.saveProjectFile);
-router.post('/developers/projects/:projectId/files/create', authenticate, authorize('developer', 'admin'), developerController.createFile);
-router.post('/developers/projects/:projectId/folders', authenticate, authorize('developer', 'admin'), developerController.createFolder);
 router.post('/developers/projects/:projectId/deploy', authenticate, authorize('developer', 'admin'), developerController.deploy);
 router.get('/developers/deployments/:deploymentId', authenticate, authorize('developer', 'admin'), developerController.getDeploymentStatus);
 router.get('/developers/deployments/:deploymentId/logs', authenticate, authorize('developer', 'admin'), developerController.getDeploymentLogs);
