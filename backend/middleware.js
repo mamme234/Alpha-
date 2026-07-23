@@ -1,4 +1,4 @@
-// backend/middleware.js - Complete updated file
+// backend/middleware.js - Complete working version
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import { getRedis } from './db.js';
