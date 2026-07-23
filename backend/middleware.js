@@ -1,8 +1,6 @@
-// backend/middleware.js - Fixed version
+// backend/middleware.js - Complete updated file
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import path from 'path';
-import config from './config.js';
 import { getRedis } from './db.js';
 
 // ==================== AUTHENTICATION ====================
@@ -14,7 +12,7 @@ export const authenticate = async (req, res, next) => {
       return res.status(401).json({ error: 'No token provided' });
     }
     
-    const decoded = jwt.verify(token, config.jwtSecret || 'secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid token' });
     }
@@ -35,7 +33,7 @@ export const authorize = (...roles) => {
     }
     
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Forbidden - Insufficient permissions' });
     }
     
     next();
@@ -66,7 +64,6 @@ export const rateLimitUser = (maxRequests = 100, windowMs = 60000) => {
       
       next();
     } catch (error) {
-      // If Redis fails, allow the request
       console.warn('Rate limiting error:', error.message);
       next();
     }
@@ -106,23 +103,6 @@ export const notFound = (req, res) => {
 
 // ==================== FILE UPLOAD ====================
 
-// Get max file size from config or use default
-const getMaxFileSize = () => {
-  try {
-    return config.limits?.maxFileSize || 100 * 1024 * 1024; // 100MB default
-  } catch (error) {
-    return 100 * 1024 * 1024;
-  }
-};
-
-const getMaxImageSize = () => {
-  try {
-    return config.limits?.maxImageSize || 5 * 1024 * 1024; // 5MB default
-  } catch (error) {
-    return 5 * 1024 * 1024;
-  }
-};
-
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -152,9 +132,7 @@ const fileFilter = (req, file, cb) => {
 
 export const upload = multer({
   storage,
-  limits: { 
-    fileSize: getMaxFileSize()
-  },
+  limits: { fileSize: 100 * 1024 * 1024 },
   fileFilter,
 });
 
@@ -190,7 +168,6 @@ export const cache = (duration = 60) => {
           return res.json(JSON.parse(cached));
         }
         
-        // Store original send
         const originalSend = res.json;
         res.json = function(data) {
           redis.setex(key, duration, JSON.stringify(data));
@@ -206,27 +183,6 @@ export const cache = (duration = 60) => {
   };
 };
 
-// ==================== CORS ====================
-
-export const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://alpha-af1q.onrender.com',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-};
-
-// ==================== SECURITY HEADERS ====================
-
-export const securityHeaders = (req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
-};
-
-// ==================== EXPORTS ====================
-
 export default {
   authenticate,
   authorize,
@@ -238,7 +194,5 @@ export default {
   uploadMultiple,
   uploadSingle,
   validate,
-  cache,
-  corsOptions,
-  securityHeaders,
+  cache
 };
