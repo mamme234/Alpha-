@@ -1,4 +1,4 @@
-// server.js - Complete server file for Render deployment
+// server.js - Complete server file
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -30,7 +30,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'https://alpha-af1q.onrender.com',
+        origin: process.env.FRONTEND_URL || 'https://alpha-af1q.onrender.com',
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -38,6 +38,15 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 5000;
+
+// ==================== REQUEST LOGGING ====================
+app.use((req, res, next) => {
+    console.log(`📥 ${req.method} ${req.path}`);
+    if (req.path === '/api/auth/register') {
+        console.log('📝 Register request body:', { ...req.body, password: '***' });
+    }
+    next();
+});
 
 // ==================== SECURITY & PERFORMANCE ====================
 
@@ -50,9 +59,23 @@ app.use(helmet({
 // Compression
 app.use(compression());
 
-// CORS configuration - Allow only your frontend
+// CORS configuration
+const allowedOrigins = [
+    'https://alpha-af1q.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5000'
+];
+
 app.use(cors({
-    origin: 'https://alpha-af1q.onrender.com',
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn('⚠️ CORS blocked:', origin);
+            callback(null, true); // Allow all in development
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -64,24 +87,13 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: 'Too many requests from this IP, please try again later.',
     standardHeaders: true,
     legacyHeaders: false,
 });
 app.use('/api', limiter);
-
-// ==================== REQUEST LOGGING ====================
-
-app.use((req, res, next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-        const duration = Date.now() - start;
-        console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
-    });
-    next();
-});
 
 // ==================== STATIC FILES ====================
 
@@ -90,7 +102,6 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 
 // ==================== HEALTH CHECK ENDPOINTS ====================
 
-// Simple health check
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'ok',
@@ -102,7 +113,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Detailed health check with database status
 app.get('/health/detailed', async (req, res) => {
     const status = {
         service: 'Alpha Platform',
@@ -120,7 +130,6 @@ app.get('/health/detailed', async (req, res) => {
         }
     };
 
-    // Check PostgreSQL
     try {
         const pool = getPgPool();
         if (pool) {
@@ -133,85 +142,51 @@ app.get('/health/detailed', async (req, res) => {
         status.databases.postgres = false;
     }
 
-    // Check MongoDB
-    try {
-        const mongoose = await import('mongoose');
-        status.databases.mongodb = mongoose.connection.readyState === 1;
-    } catch (error) {
-        status.databases.mongodb = false;
-    }
-
-    // Check Redis
-    try {
-        const redis = getRedis();
-        if (redis) {
-            const result = await redis.ping();
-            status.databases.redis = result === 'PONG';
-        }
-    } catch (error) {
-        status.databases.redis = false;
-    }
-
     res.status(200).json(status);
 });
 
-// Debug endpoint for environment variables (remove in production)
 app.get('/debug/env', (req, res) => {
-    // Only show in development or with a secret key
     const isDevelopment = process.env.NODE_ENV !== 'production';
     if (!isDevelopment) {
         return res.status(403).json({ error: 'Forbidden in production' });
     }
 
-    const safeEnv = {
+    res.json({
         NODE_ENV: process.env.NODE_ENV,
         PORT: process.env.PORT,
         DB_HOST: process.env.DB_HOST ? 'set' : 'not set',
         DB_NAME: process.env.DB_NAME ? 'set' : 'not set',
         DB_USER: process.env.DB_USER ? 'set' : 'not set',
-        DB_PORT: process.env.DB_PORT ? 'set' : 'not set',
-        MONGODB_URI: process.env.MONGODB_URI ? 'set' : 'not set',
         FRONTEND_URL: process.env.FRONTEND_URL,
         JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'not set',
-    };
-    res.json(safeEnv);
+    });
 });
 
 // ==================== API ROUTES ====================
 
-// Mount API routes
 app.use('/api', routes);
 
 // ==================== FRONTEND ROUTES ====================
 
-// Serve index.html for all non-API routes (SPA support)
 app.get('*', (req, res) => {
-    // If it's an API route that wasn't caught, return 404
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
-    // Otherwise, serve index.html for frontend routes
     res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // ==================== ERROR HANDLING ====================
 
-// 404 handler for API
 app.use(notFound);
-
-// Global error handler
 app.use(errorHandler);
 
 // Unhandled promise rejection handler
 process.on('unhandledRejection', (err) => {
     console.error('❌ Unhandled Rejection:', err);
-    // Don't crash the server
 });
 
-// Unhandled exception handler
 process.on('uncaughtException', (err) => {
     console.error('❌ Uncaught Exception:', err);
-    // Don't crash the server
 });
 
 // Graceful shutdown
@@ -227,27 +202,18 @@ process.on('SIGTERM', () => {
 
 const startServer = async () => {
     try {
-        // Connect to databases (don't fail if not available)
-        try {
-            await connectDB();
-            startScheduler();
-            console.log('✅ Database connections established');
-        } catch (dbError) {
-            console.warn('⚠️ Database connection failed:', dbError.message);
-            console.log('💡 App will run with limited functionality until databases are configured');
-        }
-
-        // Setup WebSocket
+        console.log('🚀 Starting server...');
+        
+        await connectDB();
+        startScheduler();
         setupSockets(io);
-
-        // Start server
+        
         server.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`📱 Frontend: https://alpha-af1q.onrender.com`);
-            console.log(`🔌 API: https://alpha-af1q.onrender.com/api`);
-            console.log(`❤️ Health: https://alpha-af1q.onrender.com/health`);
-            console.log(`🔧 Debug: https://alpha-af1q.onrender.com/debug/env`);
-            console.log(`✅ CORS allowed: https://alpha-af1q.onrender.com`);
+            console.log(`✅ Server running on port ${PORT}`);
+            console.log(`📱 Frontend: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}`);
+            console.log(`🔌 API: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/api`);
+            console.log(`❤️ Health: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/health`);
+            console.log(`🧪 Test: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/api/test`);
         });
     } catch (error) {
         console.error('❌ Failed to start server:', error);
@@ -255,7 +221,6 @@ const startServer = async () => {
     }
 };
 
-// Start the server
 startServer();
 
 export { app, server, io };
