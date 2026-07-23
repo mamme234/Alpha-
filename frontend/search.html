@@ -1,327 +1,240 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px 60px;
+        }
+        .profile-header {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255,0,0,0.06);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 3px solid rgba(255,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .profile-info h1 { font-family: 'Black Ops One', cursive; font-size: 28px; }
+        .profile-info .bio { color: rgba(255,255,255,0.3); margin: 4px 0; }
+        .profile-info .joined { color: rgba(255,255,255,0.15); font-size: 13px; }
+        .profile-stats { display: flex; gap: 30px; margin: 12px 0; flex-wrap: wrap; }
+        .profile-stats .stat { text-align: center; }
+        .profile-stats .stat .num { font-family: 'Black Ops One', cursive; font-size: 20px; color: #cc0000; }
+        .profile-stats .stat .label { color: rgba(255,255,255,0.3); font-size: 12px; }
+        .profile-tabs { display: flex; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 24px; }
+        .profile-tabs .tab { padding: 12px 24px; cursor: pointer; color: rgba(255,255,255,0.3); border-bottom: 2px solid transparent; transition: all 0.3s ease; font-size: 14px; }
+        .profile-tabs .tab:hover { color: rgba(255,255,255,0.6); }
+        .profile-tabs .tab.active { color: #ffffff; border-bottom-color: #cc0000; }
+        .profile-content { padding: 4px 0; }
+        .profile-content .item { display: flex; align-items: center; gap: 16px; padding: 12px 16px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.04); }
+        .profile-content .item .icon { font-size: 20px; color: rgba(255,255,255,0.1); }
+        .profile-content .item .text { flex: 1; }
+        .profile-content .item .text .title { font-weight: 500; color: rgba(255,255,255,0.7); }
+        .profile-content .item .text .desc { color: rgba(255,255,255,0.2); font-size: 13px; }
+        .profile-content .item .action { color: rgba(255,255,255,0.2); font-size: 13px; }
+        @media (max-width: 768px) {
+            .profile-container { padding: 16px 20px; }
+            .profile-header { flex-direction: column; align-items: center; text-align: center; }
+            .profile-stats { justify-content: center; }
+            .profile-tabs { overflow-x: auto; }
+            .profile-tabs .tab { padding: 10px 16px; font-size: 13px; white-space: nowrap; }
+        }
+        @media (max-width: 480px) {
+            .profile-stats { gap: 16px; }
+            .profile-stats .stat .num { font-size: 16px; }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="navbar-brand">
-                <img src="logo.png" alt="Platform Logo" height="40">
-                <span>DevPlatform</span>
+    <div class="bg-gradient"></div>
+
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo-wrapper">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-brand">Alpha</span>
+                    <span class="logo-tagline">developers choice</span>
+                </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="search.html" class="active">Search</a></li>
-                <li><a href="users.html" data-auth>Dashboard</a></li>
-                <li><a href="#" onclick="logout()" data-auth>Logout</a></li>
-                <li><a href="login.html" data-guest>Login</a></li>
-                <li>
-                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">
-                        🌓
-                    </button>
-                </li>
-            </ul>
+            <nav class="nav" id="nav">
+                <a href="users.html">Dashboard</a>
+                <a href="profile.html" class="active">Profile</a>
+                <a href="settings.html">Settings</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
-    </nav>
+    </header>
 
-    <div class="container" style="padding:30px 0;">
-        <h1>Search Apps</h1>
-        <p style="color:var(--gray);">Find the perfect app for your needs</p>
-
-        <!-- Search Bar -->
-        <div style="margin:30px 0;">
-            <form id="search-form" onsubmit="handleSearch(event)">
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="search-query" class="form-control" placeholder="Search by name, developer, category..." style="flex:1;" value="${new URLSearchParams(window.location.search).get('q') || ''}">
-                    <button type="submit" class="btn btn-primary">🔍 Search</button>
+    <main class="page-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-info">
+                    <h1>Muhammad Ilyas</h1>
+                    <p class="bio">Full-stack developer | Building amazing things 🚀</p>
+                    <p class="joined"><i class="fas fa-calendar-alt"></i> Joined July 2026</p>
+                    <div class="profile-stats">
+                        <div class="stat"><div class="num">42</div><div class="label">Downloads</div></div>
+                        <div class="stat"><div class="num">15</div><div class="label">Favorites</div></div>
+                        <div class="stat"><div class="num">8</div><div class="label">Reviews</div></div>
+                        <div class="stat"><div class="num">3</div><div class="label">Following</div></div>
+                    </div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+                        <button class="btn btn-primary btn-sm" onclick="editProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+                        <button class="btn btn-outline btn-sm" onclick="shareProfile()"><i class="fas fa-share"></i> Share</button>
+                    </div>
                 </div>
-            </form>
-        </div>
-
-        <!-- Filters -->
-        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:30px;padding:20px;background:var(--lighter);border-radius:8px;">
-            <div>
-                <label class="form-label" style="font-size:0.85rem;">Category</label>
-                <select id="filter-category" class="form-control" onchange="applyFilters()">
-                    <option value="">All Categories</option>
-                    <option value="ai">🤖 AI</option>
-                    <option value="education">📚 Education</option>
-                    <option value="business">💼 Business</option>
-                    <option value="finance">💰 Finance</option>
-                    <option value="health">🏥 Health</option>
-                    <option value="social">👥 Social</option>
-                    <option value="entertainment">🎭 Entertainment</option>
-                    <option value="games">🎮 Games</option>
-                    <option value="productivity">⚡ Productivity</option>
-                    <option value="tools">🔧 Tools</option>
-                    <option value="shopping">🛍️ Shopping</option>
-                    <option value="music">🎵 Music</option>
-                    <option value="photography">📷 Photography</option>
-                    <option value="news">📰 News</option>
-                    <option value="travel">✈️ Travel</option>
-                    <option value="security">🔒 Security</option>
-                </select>
             </div>
 
-            <div>
-                <label class="form-label" style="font-size:0.85rem;">Platform</label>
-                <select id="filter-platform" class="form-control" onchange="applyFilters()">
-                    <option value="">All Platforms</option>
-                    <option value="web">🌐 Web</option>
-                    <option value="android">📱 Android</option>
-                    <option value="ios">📱 iOS</option>
-                    <option value="desktop">💻 Desktop</option>
-                </select>
+            <div class="profile-tabs">
+                <div class="tab active" onclick="switchTab('apps')">📱 Apps</div>
+                <div class="tab" onclick="switchTab('activity')">📊 Activity</div>
+                <div class="tab" onclick="switchTab('reviews')">⭐ Reviews</div>
+                <div class="tab" onclick="switchTab('following')">👥 Following</div>
             </div>
 
-            <div>
-                <label class="form-label" style="font-size:0.85rem;">Price</label>
-                <select id="filter-price" class="form-control" onchange="applyFilters()">
-                    <option value="">All</option>
-                    <option value="free">Free</option>
-                    <option value="paid">Paid</option>
-                    <option value="open-source">Open Source</option>
-                </select>
+            <div class="profile-content" id="profile-content">
+                <div class="item">
+                    <div class="icon">📱</div>
+                    <div class="text">
+                        <div class="title">Awesome App</div>
+                        <div class="desc">Published 2 weeks ago • 1.2K downloads</div>
+                    </div>
+                    <div class="action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="item">
+                    <div class="icon">📱</div>
+                    <div class="text">
+                        <div class="title">Dev Tools Pro</div>
+                        <div class="desc">Published 1 month ago • 856 downloads</div>
+                    </div>
+                    <div class="action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="item">
+                    <div class="icon">📱</div>
+                    <div class="text">
+                        <div class="title">API Manager</div>
+                        <div class="desc">Published 2 months ago • 342 downloads</div>
+                    </div>
+                    <div class="action"><i class="fas fa-chevron-right"></i></div>
+                </div>
             </div>
-
-            <div>
-                <label class="form-label" style="font-size:0.85rem;">Sort By</label>
-                <select id="filter-sort" class="form-control" onchange="applyFilters()">
-                    <option value="relevance">Relevance</option>
-                    <option value="downloads">Most Downloaded</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="newest">Newest</option>
-                    <option value="updated">Recently Updated</option>
-                </select>
-            </div>
-
-            <div style="display:flex;align-items:flex-end;">
-                <button class="btn btn-outline" onclick="resetFilters()">Reset Filters</button>
-            </div>
         </div>
+    </main>
 
-        <!-- Results Count -->
-        <div id="results-count" style="margin-bottom:20px;color:var(--gray);">
-            Loading results...
-        </div>
+    <script>
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
 
-        <!-- Results -->
-        <div id="search-results" class="card-grid">
-            <!-- Loaded dynamically -->
-        </div>
+        function editProfile() {
+            window.location.href = 'settings.html';
+        }
 
-        <!-- Pagination -->
-        <div id="pagination" style="display:flex;justify-content:center;gap:10px;margin-top:30px;">
-            <!-- Loaded dynamically -->
-        </div>
-    </div>
-
-    <script type="module">
-        import { performSearch, showError, logout, toggleTheme, showLoading, hideLoading } from './all.js';
-        import api from './api.js';
-
-        window.logout = logout;
-        window.toggleTheme = toggleTheme;
-
-        let currentPage = 1;
-        let totalPages = 1;
-        let currentQuery = '';
-        let currentFilters = {};
-
-        const getUrlParams = () => {
-            return Object.fromEntries(new URLSearchParams(window.location.search));
-        };
-
-        const handleSearch = async (event) => {
-            event.preventDefault();
-            const query = document.getElementById('search-query').value;
-            const params = new URLSearchParams(window.location.search);
-            params.set('q', query);
-            params.set('page', '1');
-            window.history.pushState({}, '', `?${params.toString()}`);
-            await loadSearchResults(1);
-        };
-
-        window.applyFilters = async () => {
-            await loadSearchResults(1);
-        };
-
-        window.resetFilters = () => {
-            document.getElementById('filter-category').value = '';
-            document.getElementById('filter-platform').value = '';
-            document.getElementById('filter-price').value = '';
-            document.getElementById('filter-sort').value = 'relevance';
-            applyFilters();
-        };
-
-        const loadSearchResults = async (page = 1) => {
-            const params = getUrlParams();
-            const query = params.q || document.getElementById('search-query').value;
-            const category = document.getElementById('filter-category').value;
-            const platform = document.getElementById('filter-platform').value;
-            const price = document.getElementById('filter-price').value;
-            const sort = document.getElementById('filter-sort').value;
-
-            currentQuery = query;
-            currentFilters = { category, platform, price, sort };
-            currentPage = page;
-
-            try {
-                showLoading('#search-results');
-                
-                const results = await api.public.search({
-                    q: query,
-                    category,
-                    platform,
-                    price,
-                    sort,
-                    page,
-                    limit: 20
+        function shareProfile() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out my profile on Alpha Platform',
+                    url: window.location.href
                 });
-
-                renderResults(results);
-                
-                document.getElementById('results-count').textContent = 
-                    `Found ${results.total} results${results.total !== 1 ? 's' : ''}`;
-                
-                renderPagination(results.total, page);
-                
-                hideLoading('#search-results');
-            } catch (error) {
-                showError('Search failed: ' + error.message);
-                hideLoading('#search-results');
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Profile link copied to clipboard!');
             }
-        };
+        }
 
-        const renderResults = (results) => {
-            const container = document.getElementById('search-results');
+        function switchTab(tab) {
+            document.querySelectorAll('.profile-tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.profile-tabs .tab[onclick="switchTab('${tab}')"]`).classList.add('active');
             
-            if (!results.data || results.data.length === 0) {
-                container.innerHTML = `
-                    <div style="grid-column:1/-1;text-align:center;padding:60px 0;">
-                        <div style="font-size:4rem;margin-bottom:20px;">🔍</div>
-                        <h3>No apps found</h3>
-                        <p style="color:var(--gray);">Try adjusting your search terms or filters</p>
-                        <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
-                    </div>
+            const content = document.getElementById('profile-content');
+            if (tab === 'apps') {
+                content.innerHTML = `
+                    <div class="item"><div class="icon">📱</div><div class="text"><div class="title">Awesome App</div><div class="desc">Published 2 weeks ago • 1.2K downloads</div></div><div class="action"><i class="fas fa-chevron-right"></i></div></div>
+                    <div class="item"><div class="icon">📱</div><div class="text"><div class="title">Dev Tools Pro</div><div class="desc">Published 1 month ago • 856 downloads</div></div><div class="action"><i class="fas fa-chevron-right"></i></div></div>
                 `;
-                return;
+            } else if (tab === 'activity') {
+                content.innerHTML = `
+                    <div class="item"><div class="icon">📥</div><div class="text"><div class="title">Downloaded "Awesome App"</div><div class="desc">2 hours ago</div></div><div class="action">📱</div></div>
+                    <div class="item"><div class="icon">⭐</div><div class="text"><div class="title">Reviewed "Dev Tools Pro"</div><div class="desc">5 hours ago • 5 stars</div></div><div class="action">⭐</div></div>
+                    <div class="item"><div class="icon">❤️</div><div class="text"><div class="title">Favorited "API Manager"</div><div class="desc">1 day ago</div></div><div class="action">❤️</div></div>
+                `;
+            } else if (tab === 'reviews') {
+                content.innerHTML = `
+                    <div class="item"><div class="icon">⭐</div><div class="text"><div class="title">Great app! ⭐⭐⭐⭐⭐</div><div class="desc">"This is the best tool I've ever used" • 2 days ago</div></div><div class="action">📱</div></div>
+                    <div class="item"><div class="icon">⭐</div><div class="text"><div class="title">Good but needs improvements ⭐⭐⭐⭐</div><div class="desc">"Great features, could use better docs" • 5 days ago</div></div><div class="action">📱</div></div>
+                `;
+            } else if (tab === 'following') {
+                content.innerHTML = `
+                    <div class="item"><div class="icon">👤</div><div class="text"><div class="title">John Doe</div><div class="desc">Developer • 12 apps</div></div><div class="action">Following</div></div>
+                    <div class="item"><div class="icon">👤</div><div class="text"><div class="title">Jane Smith</div><div class="desc">Designer • 8 apps</div></div><div class="action">Following</div></div>
+                `;
             }
+        }
 
-            container.innerHTML = results.data.map(app => `
-                <div class="app-card" onclick="window.location.href='app.html?id=${app._id}'">
-                    <img src="${app.icon || '/assets/default-app-icon.png'}" alt="${app.name}" class="app-card-image" 
-                         onerror="this.src='/assets/default-app-icon.png'">
-                    <div class="app-card-content">
-                        <h3 class="app-card-title">${app.name}</h3>
-                        <p class="app-card-developer">by ${app.developerName || 'Unknown'}</p>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:5px 0;">
-                            ${app.tags?.slice(0, 3).map(tag => 
-                                `<span style="background:var(--lighter);padding:2px 8px;border-radius:12px;font-size:0.75rem;">#${tag}</span>`
-                            ).join('')}
-                        </div>
-                        <div class="app-card-rating">
-                            ⭐ ${app.rating?.toFixed(1) || 'N/A'}
-                            <span style="color:var(--gray);font-size:0.85rem;">(${app.totalReviews || 0} reviews)</span>
-                            <span style="color:var(--gray);font-size:0.85rem;">• 📥 ${app.downloads || 0}</span>
-                        </div>
-                        <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;">
-                            ${app.isOpenSource ? '<span style="background:#d4edda;padding:2px 8px;border-radius:12px;font-size:0.75rem;">Open Source</span>' : ''}
-                            ${app.isFree ? '<span style="background:#d1ecf1;padding:2px 8px;border-radius:12px;font-size:0.75rem;">Free</span>' : `<span style="background:#fff3cd;padding:2px 8px;border-radius:12px;font-size:0.75rem;">$${app.price || '0.99'}</span>`}
-                            ${app.isVerified ? '<span style="background:#cce5ff;padding:2px 8px;border-radius:12px;font-size:0.75rem;">✅ Verified</span>' : ''}
-                        </div>
-                        <div class="app-card-actions">
-                            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); downloadApp('${app._id}')">
-                                📥 Download
-                            </button>
-                            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleFavorite('${app._id}')">
-                                ♥
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        };
-
-        const renderPagination = (total, currentPage) => {
-            const container = document.getElementById('pagination');
-            const limit = 20;
-            const totalPages = Math.ceil(total / limit);
-            
-            if (totalPages <= 1) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let html = '';
-            
-            // Previous
-            if (currentPage > 1) {
-                html += `<button class="btn btn-outline btn-sm" onclick="goToPage(${currentPage - 1})">←</button>`;
-            }
-            
-            // Page numbers
-            const maxVisible = 5;
-            let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-            let end = Math.min(totalPages, start + maxVisible - 1);
-            
-            if (end - start < maxVisible - 1) {
-                start = Math.max(1, end - maxVisible + 1);
-            }
-            
-            if (start > 1) {
-                html += `<button class="btn btn-outline btn-sm" onclick="goToPage(1)">1</button>`;
-                if (start > 2) {
-                    html += `<span style="padding:0 10px;">...</span>`;
-                }
-            }
-            
-            for (let i = start; i <= end; i++) {
-                html += `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="goToPage(${i})">${i}</button>`;
-            }
-            
-            if (end < totalPages) {
-                if (end < totalPages - 1) {
-                    html += `<span style="padding:0 10px;">...</span>`;
-                }
-                html += `<button class="btn btn-outline btn-sm" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-            }
-            
-            // Next
-            if (currentPage < totalPages) {
-                html += `<button class="btn btn-outline btn-sm" onclick="goToPage(${currentPage + 1})">→</button>`;
-            }
-            
-            container.innerHTML = html;
-        };
-
-        window.goToPage = (page) => {
-            const params = new URLSearchParams(window.location.search);
-            params.set('page', page);
-            window.history.pushState({}, '', `?${params.toString()}`);
-            loadSearchResults(page);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        // Search on enter in filter dropdowns
-        document.querySelectorAll('#filter-category, #filter-platform, #filter-price, #filter-sort').forEach(el => {
-            el.addEventListener('change', applyFilters);
-        });
-
-        // Initial load
         document.addEventListener('DOMContentLoaded', () => {
-            const params = getUrlParams();
-            const query = params.q || '';
-            if (query) {
-                document.getElementById('search-query').value = query;
+            const hamburger = document.getElementById('hamburger');
+            const nav = document.getElementById('nav');
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    nav.classList.toggle('open');
+                });
+                document.querySelectorAll('.nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        nav.classList.remove('open');
+                    });
+                });
             }
-            loadSearchResults(parseInt(params.page) || 1);
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            });
         });
     </script>
 </body>
-  </html>
+    </html>
