@@ -1,40 +1,238 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="navbar-brand">
-                <img src="logo.png" alt="Platform Logo" height="40">
-                <span>DevPlatform</span>
+    <div class="bg-gradient"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo-wrapper" id="logoLink">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-brand">Alpha</span>
+                    <span class="logo-tagline">developers choice</span>
+                </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="users.html" class="active">Dashboard</a></li>
-                <li><a href="search.html">Search</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="settings.html">Settings</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-                <li>
-                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">
-                        🌓
-                    </button>
-                </li>
-            </ul>
+
+            <nav class="nav" id="nav">
+                <a href="users.html" class="active">Dashboard</a>
+                <a href="search.html">Search</a>
+                <a href="profile.html">Profile</a>
+                <a href="settings.html">Settings</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </nav>
+
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </nav>
+    </header>
 
-    <div class="container" style="padding:30px 0;">
-        <h1>User Dashboard</h1>
-        <p style="color:var(--gray);">Discover and manage your apps</p>
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        <div class="dashboard-container">
+            
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">User Dashboard</h1>
+                    <p class="dashboard-subtitle">Discover and manage your apps</p>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="search.html" class="btn btn-primary btn-sm">
+                        <i class="fas fa-search"></i> Explore Apps
+                    </a>
+                </div>
+            </div>
 
-        <!-- Quick Stats -->
-        <div class="dashboard-stats" id="user-stats">
+            <!-- Stats -->
+            <div class="dashboard-stats" id="user-stats">
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">📥 Downloads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">❤️ Favorites</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">⭐ Reviews</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">👥 Following</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action-card" onclick="window.location.href='search.html'">
+                    <i class="fas fa-search"></i>
+                    <span>Find Apps</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='favorites.html'">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='notifications.html'">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </div>
+            </div>
+
+            <!-- Featured Apps -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> Featured Apps</h2>
+                    <a href="search.html" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="card-grid" id="featured-apps">
+                    <div class="empty-state">
+                        <i class="fas fa-star"></i>
+                        <h3>No Featured Apps</h3>
+                        <p>Check back soon for featured apps</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trending Apps -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-fire"></i> Trending Apps</h2>
+                    <a href="search.html?sort=trending" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="card-grid" id="trending-apps">
+                    <div class="empty-state">
+                        <i class="fas fa-fire"></i>
+                        <h3>No Trending Apps</h3>
+                        <p>Check back soon for trending apps</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Your Favorites -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-heart" style="color:#ff6b6b;"></i> Your Favorites</h2>
+                    <a href="favorites.html" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="card-grid" id="favorites">
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <h3>No Favorites Yet</h3>
+                        <p>Start exploring and save your favorite apps</p>
+                        <a href="search.html" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Explore
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Downloads -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-download"></i> Recent Downloads</h2>
+                    <a href="downloads.html" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>App Name</th>
+                                <th>Developer</th>
+                                <th>Version</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-downloads">
+                            <tr>
+                                <td colspan="5" class="empty-table">
+                                    <i class="fas fa-inbox"></i> No downloads yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // ============================================================
+        // SIMPLE LOGOUT
+        // ============================================================
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // ============================================================
+        // HAMBURGER
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const nav = document.getElementById('nav');
+
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    nav.classList.toggle('open');
+                });
+
+                document.querySelectorAll('.nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        nav.classList.remove('open');
+                    });
+                });
+            }
+
+            // Scroll effect
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</body>
+                </html>        <div class="dashboard-stats" id="user-stats">
             <!-- Loaded dynamically -->
         </div>
 
