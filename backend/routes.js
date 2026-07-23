@@ -1,103 +1,115 @@
-// routes.js
+// backend/routes.js - Complete updated file
 import express from 'express';
-import { 
-  authController, 
-  userController, 
-  developerController, 
-  adminController 
-} from './controllers.js';
+import { authController, userController, developerController, adminController } from './controllers.js';
 import { authenticate, authorize, upload, validate, rateLimitUser } from './middleware.js';
-import { validateSchema } from './validator.js';
 
 const router = express.Router();
 
-// ==================== Public Routes ====================
-// Auth
-router.post('/auth/register', validate(validateSchema.register), authController.register);
+// ==================== TEST ROUTE ====================
+router.get('/test', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'API is working!',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      'POST /api/auth/register',
+      'POST /api/auth/login',
+      'GET /api/auth/me',
+      'GET /api/test'
+    ]
+  });
+});
+
+// ==================== AUTH ROUTES ====================
+router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
 router.post('/auth/logout', authenticate, authController.logout);
 router.post('/auth/refresh', authController.refreshToken);
+router.get('/auth/me', authenticate, authController.me);
 router.post('/auth/verify-email', authController.verifyEmail);
 router.post('/auth/request-password-reset', authController.requestPasswordReset);
 router.post('/auth/reset-password', authController.resetPassword);
+router.post('/auth/change-password', authenticate, authController.changePassword);
+router.post('/auth/toggle-2fa', authenticate, authController.toggle2FA);
+router.get('/auth/sessions', authenticate, authController.getSessions);
+router.delete('/auth/sessions/:sessionId', authenticate, authController.revokeSession);
+router.delete('/auth/delete-account', authenticate, authController.deleteAccount);
 
-// Public app browsing
-router.get('/apps', userController.searchApps);
-router.get('/apps/:appId', userController.getAppDetails);
-router.get('/categories', userController.getCategories);
+// ==================== USER ROUTES ====================
+router.get('/users/dashboard', authenticate, userController.getDashboard);
+router.get('/users/favorites', authenticate, userController.getFavorites);
+router.get('/users/downloads', authenticate, userController.getDownloads);
+router.post('/users/apps/:appId/download', authenticate, userController.downloadApp);
+router.post('/users/apps/:appId/favorite', authenticate, userController.favoriteApp);
+router.post('/users/apps/:appId/reviews', authenticate, userController.writeReview);
+router.get('/users/apps/:appId/reviews', authenticate, userController.getReviews);
+router.get('/users/notifications', authenticate, userController.getNotifications);
+router.put('/users/notifications/:notificationId', authenticate, userController.markNotificationRead);
+router.put('/users/notifications/mark-all-read', authenticate, userController.markAllNotificationsRead);
+router.delete('/users/notifications/clear-all', authenticate, userController.clearAllNotifications);
+router.put('/users/profile', authenticate, userController.updateProfile);
+router.post('/users/avatar', authenticate, upload.single('avatar'), userController.updateProfile);
+router.put('/users/notification-settings', authenticate, userController.updateNotificationSettings);
+router.put('/users/privacy-settings', authenticate, userController.updatePrivacySettings);
+router.get('/users/export-data', authenticate, userController.exportData);
 
-// ==================== User Routes (Protected) ====================
-router.use('/users', authenticate, rateLimitUser(200, 60000));
-router.get('/users/dashboard', userController.getDashboard);
-router.get('/users/favorites', userController.getFavorites);
-router.get('/users/downloads', userController.getDownloadHistory);
-router.post('/users/apps/:appId/download', userController.downloadApp);
-router.post('/users/apps/:appId/favorite', userController.favoriteApp);
-router.post('/users/apps/:appId/reviews', userController.writeReview);
-router.get('/users/apps/:appId/reviews', userController.getReviews);
-router.get('/users/notifications', userController.getNotifications);
-router.put('/users/notifications/:notificationId', userController.markNotificationRead);
+// ==================== DEVELOPER ROUTES ====================
+router.get('/developers/dashboard', authenticate, authorize('developer', 'admin'), developerController.getDashboard);
+router.get('/developers/projects', authenticate, authorize('developer', 'admin'), developerController.getProjects);
+router.post('/developers/projects', authenticate, authorize('developer', 'admin'), developerController.createProject);
+router.get('/developers/projects/:projectId', authenticate, authorize('developer', 'admin'), developerController.getProject);
+router.put('/developers/projects/:projectId', authenticate, authorize('developer', 'admin'), developerController.updateProject);
+router.delete('/developers/projects/:projectId', authenticate, authorize('developer', 'admin'), developerController.deleteProject);
+router.get('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.getProjectFiles);
+router.get('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.getProjectFile);
+router.post('/developers/projects/:projectId/files', authenticate, authorize('developer', 'admin'), developerController.saveProjectFile);
+router.post('/developers/projects/:projectId/files/create', authenticate, authorize('developer', 'admin'), developerController.createFile);
+router.post('/developers/projects/:projectId/folders', authenticate, authorize('developer', 'admin'), developerController.createFolder);
+router.post('/developers/projects/:projectId/deploy', authenticate, authorize('developer', 'admin'), developerController.deploy);
+router.get('/developers/deployments/:deploymentId', authenticate, authorize('developer', 'admin'), developerController.getDeploymentStatus);
+router.get('/developers/deployments/:deploymentId/logs', authenticate, authorize('developer', 'admin'), developerController.getDeploymentLogs);
+router.get('/developers/projects/:projectId/deployments', authenticate, authorize('developer', 'admin'), developerController.getDeployments);
+router.post('/developers/deployments/:deploymentId/rollback', authenticate, authorize('developer', 'admin'), developerController.rollback);
+router.post('/developers/publish', authenticate, authorize('developer', 'admin'), developerController.publishApp);
+router.put('/developers/apps/:appId', authenticate, authorize('developer', 'admin'), developerController.updateApp);
+router.get('/developers/apps', authenticate, authorize('developer', 'admin'), developerController.getPublishedApps);
+router.get('/developers/analytics', authenticate, authorize('developer', 'admin'), developerController.getAnalytics);
+router.post('/developers/projects/:projectId/git/commit', authenticate, authorize('developer', 'admin'), developerController.gitCommit);
+router.post('/developers/projects/:projectId/team/invite', authenticate, authorize('developer', 'admin'), developerController.inviteTeamMember);
+router.get('/developers/projects/:projectId/team', authenticate, authorize('developer', 'admin'), developerController.getTeam);
 
-// ==================== Developer Routes (Protected) ====================
-router.use('/developers', authenticate, authorize('developer', 'admin'), rateLimitUser(300, 60000));
+// ==================== ADMIN ROUTES ====================
+router.get('/admin/dashboard', authenticate, authorize('admin'), adminController.getDashboard);
+router.get('/admin/users', authenticate, authorize('admin'), adminController.getUsers);
+router.put('/admin/users/:userId', authenticate, authorize('admin'), adminController.updateUser);
+router.get('/admin/apps', authenticate, authorize('admin'), adminController.getApps);
+router.put('/admin/apps/:appId/approve', authenticate, authorize('admin'), adminController.approveApp);
+router.put('/admin/apps/:appId/feature', authenticate, authorize('admin'), adminController.featureApp);
+router.get('/admin/reports', authenticate, authorize('admin'), adminController.getReports);
+router.post('/admin/categories', authenticate, authorize('admin'), adminController.manageCategories);
+router.get('/admin/system/stats', authenticate, authorize('admin'), adminController.getSystemStats);
+router.get('/admin/security/logs', authenticate, authorize('admin'), adminController.getSecurityLogs);
+router.post('/admin/backup/create', authenticate, authorize('admin'), adminController.createBackup);
 
-// Projects
-router.get('/developers/dashboard', developerController.getDashboard);
-router.post('/developers/projects', developerController.createProject);
-router.get('/developers/projects/:projectId', developerController.getProject);
-router.put('/developers/projects/:projectId', developerController.updateProject);
-router.delete('/developers/projects/:projectId', developerController.deleteProject);
-router.get('/developers/projects/:projectId/files', developerController.getProjectFiles);
-router.post('/developers/projects/:projectId/files', developerController.saveProjectFile);
-
-// Deployments
-router.post('/developers/projects/:projectId/deploy', developerController.deployProject);
-router.get('/developers/deployments/:deploymentId', developerController.getDeploymentStatus);
-router.get('/developers/deployments/:deploymentId/logs', developerController.getDeploymentLogs);
-router.post('/developers/deployments/:deploymentId/rollback', developerController.rollbackDeployment);
-
-// Publishing
-router.post('/developers/publish', developerController.publishApp);
-router.put('/developers/apps/:appId', developerController.updateApp);
-
-// Analytics
-router.get('/developers/analytics', developerController.getAnalytics);
-
-// Storage
-router.get('/developers/storage', developerController.getStorage);
-router.post('/developers/upload', upload.single('file'), developerController.uploadFile);
-
-// Environment Variables
-router.put('/developers/projects/:projectId/env', developerController.manageEnvVars);
-
-// Team
-router.post('/developers/projects/:projectId/team/invite', developerController.inviteTeamMember);
-router.get('/developers/projects/:projectId/team', developerController.getTeam);
-
-// ==================== Admin Routes (Protected) ====================
-router.use('/admin', authenticate, authorize('admin'));
-
-router.get('/admin/dashboard', adminController.getDashboard);
-router.get('/admin/users', adminController.getUsers);
-router.put('/admin/users/:userId', adminController.updateUser);
-router.get('/admin/apps', adminController.getApps);
-router.put('/admin/apps/:appId/approve', adminController.approveApp);
-router.put('/admin/apps/:appId/feature', adminController.featureApp);
-router.get('/admin/reports', adminController.getReports);
-router.post('/admin/categories', adminController.manageCategories);
-router.get('/admin/system/stats', adminController.getSystemStats);
-router.get('/admin/security/logs', adminController.getSecurityLogs);
-router.post('/admin/backup/create', adminController.createBackup);
-
-// ==================== Webhooks ====================
-router.post('/webhooks/github', (req, res) => {
-  // Handle GitHub webhooks
-  res.sendStatus(200);
+// ==================== PUBLIC ROUTES ====================
+router.get('/apps', (req, res) => {
+  res.json({ data: [] });
 });
 
-router.post('/webhooks/docker', (req, res) => {
-  // Handle Docker webhooks
-  res.sendStatus(200);
+router.get('/apps/:appId', (req, res) => {
+  res.json({ id: req.params.appId });
+});
+
+router.get('/categories', (req, res) => {
+  res.json([]);
+});
+
+router.get('/apps/search', (req, res) => {
+  res.json({ data: [] });
+});
+
+router.get('/apps/:appId/reviews', (req, res) => {
+  res.json([]);
 });
 
 export default router;
