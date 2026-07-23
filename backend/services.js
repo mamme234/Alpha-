@@ -1,4 +1,4 @@
-// backend/services.js - Fixed version
+// backend/services.js - Complete updated file with optional email
 import { v4 as uuidv4 } from 'uuid';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -17,10 +17,8 @@ export const storageService = {
   initialized: false,
   
   init() {
-    // Only initialize S3 if configuration exists
     if (config.s3 && config.s3.accessKey && config.s3.secretKey && config.s3.region) {
       try {
-        // Dynamic import for AWS SDK
         import('@aws-sdk/client-s3').then(module => {
           const { S3Client } = module;
           this.s3Client = new S3Client({
@@ -45,7 +43,6 @@ export const storageService = {
   
   async uploadFile(file, path, metadata = {}) {
     if (!this.initialized || !this.s3Client) {
-      // Fallback to local storage
       return this.uploadLocal(file, path);
     }
     
@@ -67,7 +64,6 @@ export const storageService = {
   },
   
   async uploadLocal(file, path) {
-    // Simple local file storage fallback
     const uploadDir = path.join(process.cwd(), 'uploads', path);
     await fs.mkdir(uploadDir, { recursive: true });
     const filePath = path.join(uploadDir, file.originalname);
@@ -95,13 +91,19 @@ export const storageService = {
   },
 };
 
-// ==================== Email Service ====================
+// ==================== Email Service (Optional) ====================
 export const emailService = {
   transporter: null,
   initialized: false,
   
   init() {
-    if (config.email && config.email.user && config.email.pass) {
+    const hasEmailConfig = config.email && 
+                          config.email.user && 
+                          config.email.pass && 
+                          config.email.user !== '' && 
+                          config.email.pass !== '';
+    
+    if (hasEmailConfig) {
       try {
         this.transporter = nodemailer.createTransport({
           service: config.email.service || 'gmail',
@@ -113,32 +115,77 @@ export const emailService = {
         this.initialized = true;
         console.log('✅ Email service initialized');
       } catch (error) {
-        console.warn('⚠️ Email service not configured:', error.message);
+        console.warn('⚠️ Email service initialization failed:', error.message);
+        this.initialized = false;
       }
     } else {
-      console.log('📧 Email service not configured');
+      console.log('📧 Email service not configured - skipping');
+      this.initialized = false;
     }
   },
   
   async sendEmail({ to, subject, html, text }) {
     if (!this.initialized || !this.transporter) {
-      console.log('📧 Email not sent (service not configured):', { to, subject });
-      return { message: 'Email service not configured' };
+      console.log(`📧 Email would be sent to ${to}: ${subject}`);
+      return { success: true, message: 'Email service not configured, email skipped' };
     }
     
     try {
       await this.transporter.sendMail({
-        from: `"Platform" <${config.email.user}>`,
+        from: `"${config.appName || 'Platform'}" <${config.email.user}>`,
         to,
         subject,
         text,
         html,
       });
-      console.log('📧 Email sent to:', to);
+      console.log(`✅ Email sent to: ${to}`);
+      return { success: true };
     } catch (error) {
-      console.error('Email send error:', error);
-      throw error;
+      console.error('❌ Email send error:', error);
+      return { success: false, error: error.message };
     }
+  },
+  
+  async sendVerificationEmail(email, token) {
+    const url = `${config.frontendUrl}/verify-email?token=${token}`;
+    return this.sendEmail({
+      to: email,
+      subject: 'Verify Your Email',
+      html: `
+        <h1>Welcome to ${config.appName || 'Platform'}!</h1>
+        <p>Please click the link below to verify your email:</p>
+        <a href="${url}">${url}</a>
+      `,
+      text: `Please verify your email: ${url}`,
+    });
+  },
+  
+  async sendWelcomeEmail(email, username) {
+    return this.sendEmail({
+      to: email,
+      subject: `Welcome to ${config.appName || 'Platform'}!`,
+      html: `
+        <h1>Welcome ${username}!</h1>
+        <p>Thank you for joining ${config.appName || 'Platform'}.</p>
+        <p>You can now start building and discovering amazing applications.</p>
+      `,
+      text: `Welcome ${username}! Thank you for joining.`,
+    });
+  },
+  
+  async sendPasswordResetEmail(email, token) {
+    const url = `${config.frontendUrl}/reset-password?token=${token}`;
+    return this.sendEmail({
+      to: email,
+      subject: 'Password Reset Request',
+      html: `
+        <h1>Password Reset</h1>
+        <p>Click the link below to reset your password:</p>
+        <a href="${url}">${url}</a>
+        <p>If you didn't request this, ignore this email.</p>
+      `,
+      text: `Reset your password: ${url}`,
+    });
   },
 };
 
@@ -159,7 +206,6 @@ export const deploymentService = {
     });
     await deployment.save();
     
-    // Start deployment asynchronously
     this._runDeployment(project, deployment).catch(error => {
       console.error('Deployment failed:', error);
       deployment.status = 'failed';
@@ -296,16 +342,6 @@ export const deploymentService = {
   _generateDomain(project, deployment) {
     const subdomain = `${project.name}-${deployment._id.toString().slice(-6)}`;
     return `${subdomain}.${config.deployment?.baseDomain || 'app.dev'}`;
-  },
-  
-  async _uploadToCDN(outputPath, domain) {
-    // Simplified upload - just copy files
-    const files = await this._walkDirectory(outputPath);
-    for (const file of files) {
-      const content = await fs.readFile(file);
-      // In production, this would upload to S3
-      console.log(`📤 Would upload: ${file} to ${domain}`);
-    }
   },
   
   async _walkDirectory(dir) {
