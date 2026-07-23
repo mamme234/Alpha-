@@ -1,174 +1,244 @@
-// all.js - Add this function
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Developer Dashboard — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+    <div class="bg-gradient"></div>
 
-// ============================================================
-// DEVELOPER DASHBOARD
-// ============================================================
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo-wrapper" id="logoLink">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-brand">Alpha</span>
+                    <span class="logo-tagline">developers choice</span>
+                </div>
+            </a>
 
-export const loadDeveloperDashboard = async () => {
-    try {
-        const stats = await api.developer.getDashboard();
-        
-        // Update stats
-        document.querySelectorAll('.stat-value').forEach((el, index) => {
-            const values = [
-                stats.projects || 0,
-                stats.activeDeployments || 0,
-                stats.publishedApps || 0,
-                stats.totalDownloads || 0,
-                stats.usage?.storage?.used || '0 MB',
-                stats.usage?.cpu?.used || '0%'
-            ];
-            if (el) el.textContent = values[index] || '0';
+            <nav class="nav" id="nav">
+                <a href="developers.html" class="active">Dashboard</a>
+                <a href="search.html">Search</a>
+                <a href="editor.html">Editor</a>
+                <a href="publish.html">Publish</a>
+                <a href="analytics.html">Analytics</a>
+                <a href="profile.html">Profile</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </nav>
+
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        <div class="dashboard-container">
+            
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Developer Dashboard</h1>
+                    <p class="dashboard-subtitle">Manage your projects, deployments, and apps</p>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="editor.html?new=true" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> New Project
+                    </a>
+                    <a href="publish.html" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-upload"></i> Publish App
+                    </a>
+                    <a href="deploy.html" class="btn btn-outline btn-sm">
+                        <i class="fas fa-rocket"></i> Deploy
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="dashboard-stats" id="dev-stats">
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">📁 Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">🚀 Deployments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">📱 Apps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">📥 Downloads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0 MB</div>
+                    <div class="stat-label">💾 Storage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0%</div>
+                    <div class="stat-label">⚡ CPU</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action-card" onclick="window.location.href='editor.html?new=true'">
+                    <i class="fas fa-code"></i>
+                    <span>New Project</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='publish.html'">
+                    <i class="fas fa-upload"></i>
+                    <span>Publish App</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='deploy.html'">
+                    <i class="fas fa-rocket"></i>
+                    <span>Deploy</span>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='analytics.html'">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-folder"></i> Your Projects</h2>
+                    <a href="editor.html?new=true" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> New
+                    </a>
+                </div>
+                <div class="projects-grid" id="dev-projects">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No Projects Yet</h3>
+                        <p>Create your first project to start building</p>
+                        <a href="editor.html?new=true" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Project
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Deployments -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> Recent Deployments</h2>
+                    <a href="deploy.html" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Version</th>
+                                <th>Branch</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-deployments">
+                            <tr>
+                                <td colspan="6" class="empty-table">
+                                    <i class="fas fa-inbox"></i> No deployments yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Published Apps -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-th-large"></i> Published Apps</h2>
+                    <a href="publish.html" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Publish
+                    </a>
+                </div>
+                <div class="card-grid" id="published-apps">
+                    <div class="empty-state">
+                        <i class="fas fa-th-large"></i>
+                        <h3>No Published Apps</h3>
+                        <p>Publish your first app to the marketplace</p>
+                        <a href="publish.html" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Publish App
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // ============================================================
+        // SIMPLE LOGOUT
+        // ============================================================
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // ============================================================
+        // HAMBURGER
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const nav = document.getElementById('nav');
+
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    nav.classList.toggle('open');
+                });
+
+                document.querySelectorAll('.nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        nav.classList.remove('open');
+                    });
+                });
+            }
+
+            // Scroll effect
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
         });
-
-        // Load projects
-        const projects = await api.developer.getProjects();
-        renderProjects(projects);
-
-        // Load deployments
-        const deployments = await api.developer.getDeployments();
-        renderDeployments(deployments);
-
-        // Load published apps
-        const apps = await api.developer.getPublishedApps();
-        renderPublishedApps(apps);
-
-    } catch (error) {
-        console.error('Failed to load developer dashboard:', error);
-        showError('Failed to load dashboard');
-    }
-};
-
-export const renderProjects = (projects) => {
-    const container = document.getElementById('dev-projects');
-    if (!container) return;
-
-    if (!projects || projects.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-folder-open"></i>
-                <h3>No Projects Yet</h3>
-                <p>Create your first project to start building</p>
-                <button class="btn btn-primary" onclick="navigateTo('editor', { new: true })">
-                    <i class="fas fa-plus"></i> Create Project
-                </button>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = projects.map(project => `
-        <div class="project-card">
-            <div class="project-header">
-                <h3>${project.name}</h3>
-                <span class="project-status ${project.status || 'active'}">${project.status || 'Active'}</span>
-            </div>
-            <p class="project-description">${project.description || 'No description'}</p>
-            <div class="project-meta">
-                <span><i class="fas fa-code"></i> ${project.framework || 'Unknown'}</span>
-                <span><i class="fas fa-file-code"></i> ${project.language || 'Unknown'}</span>
-                <span><i class="fas fa-clock"></i> ${project.lastDeployed ? new Date(project.lastDeployed).toLocaleDateString() : 'Never'}</span>
-            </div>
-            <div class="project-actions">
-                <button class="btn btn-primary btn-sm" onclick="navigateTo('editor', { project: '${project._id}' })">
-                    <i class="fas fa-edit"></i> Open
-                </button>
-                <button class="btn btn-success btn-sm" onclick="navigateTo('deploy', { project: '${project._id}' })">
-                    <i class="fas fa-rocket"></i> Deploy
-                </button>
-                <button class="btn btn-outline btn-sm" onclick="navigateTo('settings')">
-                    <i class="fas fa-cog"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-};
-
-export const renderDeployments = (deployments) => {
-    const tbody = document.getElementById('recent-deployments');
-    if (!tbody) return;
-
-    if (!deployments || deployments.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="empty-table">
-                    <i class="fas fa-inbox"></i> No deployments yet
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    tbody.innerHTML = deployments.slice(0, 5).map(deployment => `
-        <tr>
-            <td><strong>${deployment.project?.name || 'Unknown'}</strong></td>
-            <td>v${deployment.version || '1.0.0'}</td>
-            <td>${deployment.branch || 'main'}</td>
-            <td>
-                <span class="status-badge ${deployment.status || 'pending'}">
-                    ${deployment.status || 'Pending'}
-                </span>
-            </td>
-            <td>${new Date(deployment.deployedAt).toLocaleDateString()}</td>
-            <td>
-                <button class="btn btn-sm btn-outline" onclick="viewDeployment('${deployment._id}')">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-};
-
-export const renderPublishedApps = (apps) => {
-    const container = document.getElementById('published-apps');
-    if (!container) return;
-
-    if (!apps || apps.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-th-large"></i>
-                <h3>No Published Apps</h3>
-                <p>Publish your first app to the marketplace</p>
-                <button class="btn btn-primary" onclick="navigateTo('publish')">
-                    <i class="fas fa-upload"></i> Publish App
-                </button>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = apps.map(app => `
-        <div class="app-card" onclick="navigateTo('app', { id: '${app._id}' })">
-            <img src="${app.icon || '/assets/default-app-icon.png'}" alt="${app.name}" class="app-card-image">
-            <div class="app-card-content">
-                <h3 class="app-card-title">${app.name}</h3>
-                <p class="app-card-developer">${app.developerName || 'You'}</p>
-                <div class="app-card-rating">
-                    <i class="fas fa-star"></i> ${app.rating || 'N/A'}
-                </div>
-                <div class="app-card-stats">
-                    <span><i class="fas fa-download"></i> ${app.downloads || 0}</span>
-                    <span><i class="fas fa-users"></i> ${app.users || 0}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-};
-
-// Add to export
-export default {
-    register,
-    login,
-    logout,
-    navigateTo,
-    getUrlParams,
-    showSuccess,
-    showError,
-    showInfo,
-    showWarning,
-    initNavigation,
-    loadDeveloperDashboard,
-    renderProjects,
-    renderDeployments,
-    renderPublishedApps
-};
+    </script>
+</body>
+                    </html>
