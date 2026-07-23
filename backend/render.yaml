@@ -1,11 +1,16 @@
-# render.yaml
 services:
+  # Main Web Service (Backend + Frontend)
   - type: web
-    name: platform-backend
-    env: node
+    name: alpha-platform
+    runtime: node
+    repo: https://github.com/mamme234/Alpha
+    plan: free
+    region: ohio
     buildCommand: npm install
     startCommand: node server.js
     healthCheckPath: /health
+    autoDeploy: true
+    
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,48 +19,63 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        value: https://alpha-g2z9.vercel.app
+        value: https://alpha-platform.onrender.com
       - key: BASE_DOMAIN
-        value: app.dev
+        value: alpha-platform.onrender.com
+      
+      # PostgreSQL Database (Internal)
       - key: DB_HOST
         fromDatabase:
-          name: platform-db
+          name: alpha-db
           property: host
       - key: DB_PORT
         fromDatabase:
-          name: platform-db
+          name: alpha-db
           property: port
       - key: DB_NAME
         fromDatabase:
-          name: platform-db
+          name: alpha-db
           property: database
       - key: DB_USER
         fromDatabase:
-          name: platform-db
+          name: alpha-db
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: platform-db
+          name: alpha-db
           property: password
+      
+      # MongoDB
       - key: MONGODB_URI
         fromDatabase:
-          name: platform-mongo
+          name: alpha-mongo
           property: connectionString
+      
+      # Redis (Optional)
       - key: REDIS_URL
         fromService:
-          name: platform-redis
+          name: alpha-redis
           type: redis
           property: connectionString
 
+  # Redis Service (Optional)
   - type: redis
-    name: platform-redis
-    plan: starter
+    name: alpha-redis
+    region: ohio
+    plan: free
+    maxmemoryPolicy: noeviction
 
 databases:
-  - name: platform-db
-    plan: starter
-    databaseName: platform_dev
+  # PostgreSQL Database
+  - name: alpha-db
+    plan: free
+    region: ohio
+    databaseName: alpha_platform
+    user: alpha_user
   
-  - name: platform-mongo
-    plan: starter
-    databaseName: platform_mongo
+  # MongoDB Database
+  - name: alpha-mongo
+    plan: free
+    region: ohio
+    databaseName: alpha_platform
+    user: alpha_user
