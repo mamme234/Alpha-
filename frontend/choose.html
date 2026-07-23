@@ -11,10 +11,6 @@
 </head>
 <body>
     <div class="bg-gradient"></div>
-    <div class="symbiote-particle"></div>
-    <div class="symbiote-particle"></div>
-    <div class="glitch-line"></div>
-    <div class="glitch-line"></div>
 
     <div class="auth-page">
         <div class="auth-container" style="max-width:700px;">
@@ -42,7 +38,7 @@
             <p class="auth-subtitle">How do you want to use the platform?</p>
 
             <div class="role-grid">
-                <div class="role-card" onclick="navigateTo('login', { role: 'user' })">
+                <div class="role-card" onclick="goToLogin('user')">
                     <div class="role-card-icon">👤</div>
                     <h3>User</h3>
                     <p>Discover, download, and use amazing applications</p>
@@ -55,7 +51,7 @@
                     <button class="btn btn-primary btn-full">Continue as User</button>
                 </div>
 
-                <div class="role-card" onclick="navigateTo('login', { role: 'developer' })">
+                <div class="role-card" onclick="goToLogin('developer')">
                     <div class="role-card-icon">👨‍💻</div>
                     <h3>Developer</h3>
                     <p>Build, deploy, and publish applications</p>
@@ -75,9 +71,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import { navigateTo } from './all.js';
-        window.navigateTo = navigateTo;
+    <script>
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${role}`;
+        }
     </script>
 </body>
-</html>
+                </html>
