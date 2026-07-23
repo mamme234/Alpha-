@@ -1,24 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
-    <div class="container" style="max-width:400px;margin:80px auto;">
-        <div style="text-align:center;margin-bottom:40px;">
-            <a href="index.html">
-                <img src="logo.png" alt="Platform Logo" height="50" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>'">
-            </a>
-            <h1 style="margin-top:20px;">Welcome Back</h1>
-            <p style="color:var(--gray);">Sign in to your account</p>
-        </div>
+    <div class="bg-gradient"></div>
+    <div class="symbiote-particle"></div>
+    <div class="symbiote-particle"></div>
+    <div class="glitch-line"></div>
+    <div class="glitch-line"></div>
 
-        <div class="card" style="padding:40px;">
-            <form id="login-form" onsubmit="handleLogin(event)">
+    <div class="auth-page">
+        <div class="auth-container">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <div class="auth-logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <span class="auth-logo-text">Alpha</span>
+                <span class="auth-logo-version">v3.0</span>
+            </div>
+
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-subtitle">Sign in to your account</p>
+
+            <form id="login-form" onsubmit="handleLogin(event)" class="auth-form">
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
                     <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
@@ -28,17 +52,17 @@
                     <label class="form-label">Password</label>
                     <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
                     <div style="text-align:right;margin-top:5px;">
-                        <a href="#" onclick="showForgotPassword()" style="font-size:0.85rem;color:var(--primary);">Forgot password?</a>
+                        <a href="#" onclick="showForgotPassword()" class="auth-link">Forgot password?</a>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:1.1rem;" id="login-btn">
-                    Sign In
+                <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
             </form>
 
-            <div style="text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--light-gray);">
-                <p>Don't have an account? <a href="signup.html" style="color:var(--primary);font-weight:600;">Sign Up</a></p>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="signup.html" class="auth-link-highlight">Sign Up</a></p>
             </div>
         </div>
     </div>
@@ -52,7 +76,6 @@
 
         window.handleLogin = async (event) => {
             event.preventDefault();
-            
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             
@@ -63,25 +86,24 @@
             
             const btn = document.getElementById('login-btn');
             btn.disabled = true;
-            btn.textContent = 'Signing In...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
             
             try {
                 await login(email, password);
             } catch (error) {
-                console.error('Login error:', error);
                 showError(error.message || 'Login failed. Please try again.');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'Sign In';
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
             }
         };
 
         window.showForgotPassword = () => {
             const email = prompt('Enter your email address to reset your password:');
             if (email) {
-                alert('Password reset link sent to your email');
+                showSuccess('Password reset link sent to your email');
             }
         };
     </script>
 </body>
-</html>
+    </html>
