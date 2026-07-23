@@ -1,70 +1,84 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Your Role - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose Your Role — Alpha Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
-    <div class="container" style="text-align:center;padding:60px 0;">
-        <div style="margin-bottom:50px;">
-            <a href="index.html">
-                <img src="logo.png" alt="Platform Logo" height="60">
-            </a>
-            <h1 style="font-size:2.5rem;margin-top:20px;">Welcome to the Platform</h1>
-            <p style="font-size:1.2rem;color:var(--gray);">Choose how you want to use the platform</p>
-        </div>
+    <div class="bg-gradient"></div>
+    <div class="symbiote-particle"></div>
+    <div class="symbiote-particle"></div>
+    <div class="glitch-line"></div>
+    <div class="glitch-line"></div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;max-width:800px;margin:0 auto;">
-            <!-- User Card -->
-            <div class="card" style="padding:40px;cursor:pointer;" onclick="navigateTo('login', { role: 'user' })">
-                <div style="font-size:4rem;margin-bottom:20px;">👤</div>
-                <h2>User</h2>
-                <p style="color:var(--gray);margin:15px 0;">Discover, download, and use amazing applications created by developers</p>
-                <ul style="text-align:left;list-style:none;padding:0;">
-                    <li style="padding:5px 0;">✅ Browse and search apps</li>
-                    <li style="padding:5px 0;">✅ Download and use apps</li>
-                    <li style="padding:5px 0;">✅ Rate and review</li>
-                    <li style="padding:5px 0;">✅ Save favorites</li>
-                </ul>
-                <button class="btn btn-primary" style="margin-top:20px;width:100%;">
-                    Continue as User
-                </button>
+    <div class="auth-page">
+        <div class="auth-container" style="max-width:700px;">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <div class="auth-logo-mark">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" stroke="#440000" stroke-width="5" opacity="0.2" />
+                        <path class="logo-svg-a" d="M 50 4 L 6 94 L 30 94 L 38 66 L 62 66 L 70 94 L 94 94 Z" />
+                        <path class="logo-svg-crossbar" d="M 26 56 L 74 56" />
+                        <path class="logo-svg-horn" d="M 50 4 L 34 -4 L 44 8" />
+                        <path class="logo-svg-horn" d="M 50 4 L 66 -4 L 56 8" />
+                        <ellipse class="logo-svg-eye logo-svg-eye-pulse" cx="50" cy="36" rx="7" ry="9" />
+                        <polygon class="logo-svg-fang" points="34,56 28,70 40,58" />
+                        <polygon class="logo-svg-fang" points="66,56 60,70 72,58" />
+                        <circle class="logo-svg-dot" cx="8" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="92" cy="92" r="2.5" fill="rgba(255,0,0,0.15)" />
+                        <circle class="logo-svg-dot" cx="50" cy="6" r="2.5" fill="rgba(255,0,0,0.2)" />
+                    </svg>
+                </div>
+                <span class="auth-logo-text">Alpha</span>
+                <span class="auth-logo-version">v3.0</span>
             </div>
 
-            <!-- Developer Card -->
-            <div class="card" style="padding:40px;cursor:pointer;" onclick="navigateTo('login', { role: 'developer' })">
-                <div style="font-size:4rem;margin-bottom:20px;">👨‍💻</div>
-                <h2>Developer</h2>
-                <p style="color:var(--gray);margin:15px 0;">Build, deploy, and publish applications to the platform</p>
-                <ul style="text-align:left;list-style:none;padding:0;">
-                    <li style="padding:5px 0;">✅ Write code online</li>
-                    <li style="padding:5px 0;">✅ One-click deployment</li>
-                    <li style="padding:5px 0;">✅ Publish applications</li>
-                    <li style="padding:5px 0;">✅ Analytics and insights</li>
-                </ul>
-                <button class="btn btn-primary" style="margin-top:20px;width:100%;">
-                    Continue as Developer
-                </button>
-            </div>
-        </div>
+            <h1 class="auth-title">Choose Your Role</h1>
+            <p class="auth-subtitle">How do you want to use the platform?</p>
 
-        <div style="margin-top:40px;color:var(--gray);">
-            <p>Already have an account? <a href="login.html" style="color:var(--primary);font-weight:600;">Sign In</a></p>
+            <div class="role-grid">
+                <div class="role-card" onclick="navigateTo('login', { role: 'user' })">
+                    <div class="role-card-icon">👤</div>
+                    <h3>User</h3>
+                    <p>Discover, download, and use amazing applications</p>
+                    <ul class="role-features">
+                        <li><i class="fas fa-check"></i> Browse and search apps</li>
+                        <li><i class="fas fa-check"></i> Download and use apps</li>
+                        <li><i class="fas fa-check"></i> Rate and review</li>
+                        <li><i class="fas fa-check"></i> Save favorites</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Continue as User</button>
+                </div>
+
+                <div class="role-card" onclick="navigateTo('login', { role: 'developer' })">
+                    <div class="role-card-icon">👨‍💻</div>
+                    <h3>Developer</h3>
+                    <p>Build, deploy, and publish applications</p>
+                    <ul class="role-features">
+                        <li><i class="fas fa-check"></i> Write code online</li>
+                        <li><i class="fas fa-check"></i> One-click deployment</li>
+                        <li><i class="fas fa-check"></i> Publish applications</li>
+                        <li><i class="fas fa-check"></i> Analytics and insights</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Continue as Developer</button>
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html" class="auth-link-highlight">Sign In</a></p>
+            </div>
         </div>
     </div>
 
     <script type="module">
-        window.navigateTo = (page, params = {}) => {
-            const url = new URL(window.location.href);
-            url.pathname = `/${page}.html`;
-            Object.entries(params).forEach(([key, value]) => {
-                url.searchParams.set(key, value);
-            });
-            window.location.href = url.toString();
-        };
+        import { navigateTo } from './all.js';
+        window.navigateTo = navigateTo;
     </script>
 </body>
-</html>
+    </html>
