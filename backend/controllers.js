@@ -1,7 +1,8 @@
-// backend/controllers.js - Simple working version
+// backend/controllers.js - Complete updated file
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getPgPool } from './db.js';
+import { emailService } from './services.js';
 
 // ==================== AUTH CONTROLLERS ====================
 
@@ -12,7 +13,6 @@ export const authController = {
     try {
       console.log('📝 Register:', { username, email });
 
-      // Simple validation
       if (!username || !email || !password) {
         return res.status(400).json({ error: 'All fields required' });
       }
@@ -22,7 +22,6 @@ export const authController = {
         return res.status(500).json({ error: 'Database error' });
       }
 
-      // Check if user exists
       const existing = await pool.query(
         'SELECT id FROM users WHERE email = $1 OR username = $2',
         [email, username]
@@ -32,7 +31,6 @@ export const authController = {
         return res.status(409).json({ error: 'User already exists' });
       }
 
-      // Hash password and create user
       const hashedPassword = await bcrypt.hash(password, 10);
       const result = await pool.query(
         `INSERT INTO users (username, email, password_hash, role, is_developer, created_at)
@@ -44,15 +42,22 @@ export const authController = {
       const user = result.rows[0];
       console.log('✅ User created:', user.username);
 
-      // Create token
       const token = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET || 'secret',
         { expiresIn: '7d' }
       );
 
+      // Try to send welcome email - don't fail if it doesn't work
+      try {
+        await emailService.sendWelcomeEmail(email, username);
+      } catch (emailError) {
+        console.log('📧 Welcome email skipped (not configured)');
+      }
+
       res.status(201).json({
         success: true,
+        message: 'Registration successful! You can now login.',
         user: {
           id: user.id,
           username: user.username,
@@ -83,7 +88,6 @@ export const authController = {
         return res.status(500).json({ error: 'Database error' });
       }
 
-      // Find user
       const result = await pool.query(
         'SELECT * FROM users WHERE email = $1',
         [email]
@@ -95,13 +99,11 @@ export const authController = {
 
       const user = result.rows[0];
 
-      // Check password
       const validPassword = await bcrypt.compare(password, user.password_hash);
       if (!validPassword) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
-      // Create token
       const token = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET || 'secret',
@@ -154,6 +156,47 @@ export const authController = {
 
   logout: async (req, res) => {
     res.json({ success: true, message: 'Logged out' });
+  },
+
+  changePassword: async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.userId;
+
+    try {
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const pool = getPgPool();
+      if (!pool) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+
+      const result = await pool.query(
+        'SELECT password_hash FROM users WHERE id = $1',
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const validPassword = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
+      if (!validPassword) {
+        return res.status(401).json({ error: 'Current password is incorrect' });
+      }
+
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+      await pool.query(
+        'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
+        [newPasswordHash, userId]
+      );
+
+      res.json({ success: true, message: 'Password changed successfully' });
+    } catch (error) {
+      console.error('Change password error:', error);
+      res.status(500).json({ error: 'Failed to change password' });
+    }
   }
 };
 
