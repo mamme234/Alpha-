@@ -11,10 +11,6 @@
 </head>
 <body>
     <div class="bg-gradient"></div>
-    <div class="symbiote-particle"></div>
-    <div class="symbiote-particle"></div>
-    <div class="glitch-line"></div>
-    <div class="glitch-line"></div>
 
     <div class="auth-page">
         <div class="auth-container" style="max-width:500px;">
@@ -41,10 +37,10 @@
             <h1 class="auth-title">Create Your Account</h1>
             <p class="auth-subtitle">Join the developer ecosystem</p>
 
-            <form id="signup-form" onsubmit="handleSignup(event)" class="auth-form">
+            <form id="signup-form" class="auth-form">
                 <div class="form-group">
                     <label class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Choose a username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+">
+                    <input type="text" id="username" class="form-control" placeholder="Choose a username" required minlength="3" maxlength="30">
                     <div class="form-text">Must be 3-30 characters, alphanumeric only</div>
                 </div>
 
@@ -89,7 +85,7 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-full" id="signup-btn">
+                <button type="button" class="btn btn-primary btn-full" id="signup-btn" onclick="handleSignup()">
                     <i class="fas fa-user-plus"></i> Create Account
                 </button>
             </form>
@@ -100,74 +96,191 @@
         </div>
     </div>
 
-    <script type="module">
-        import { register, showError, showSuccess } from './all.js';
-
-        window.register = register;
-        window.showError = showError;
-        window.showSuccess = showSuccess;
+    <script>
+        // ============================================================
+        // SIMPLE SIGNUP FUNCTION - NO MODULES
+        // ============================================================
+        
+        const API_URL = 'https://alpha-af1q.onrender.com/api';
 
         let selectedRole = 'user';
 
-        window.selectRole = (role) => {
+        function selectRole(role) {
             selectedRole = role;
             document.getElementById('role').value = role;
             document.getElementById('role-user').className = `role-btn ${role === 'user' ? 'active' : ''}`;
             document.getElementById('role-developer').className = `role-btn ${role === 'developer' ? 'active' : ''}`;
-        };
+        }
 
-        window.handleSignup = async (event) => {
-            event.preventDefault();
-            
+        async function handleSignup() {
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const role = document.getElementById('role').value;
             const terms = document.getElementById('terms').checked;
+            const btn = document.getElementById('signup-btn');
             
+            // Validate
             if (!username || username.length < 3) {
-                showError('Username must be at least 3 characters');
+                showNotification('Username must be at least 3 characters', 'error');
                 return;
             }
             
             if (!email || !email.includes('@')) {
-                showError('Please enter a valid email address');
+                showNotification('Please enter a valid email address', 'error');
                 return;
             }
             
             if (password.length < 8) {
-                showError('Password must be at least 8 characters');
+                showNotification('Password must be at least 8 characters', 'error');
                 return;
             }
             
             if (password !== confirmPassword) {
-                showError('Passwords do not match');
+                showNotification('Passwords do not match', 'error');
                 return;
             }
             
             if (!terms) {
-                showError('Please agree to the Terms of Service');
+                showNotification('Please agree to the Terms of Service', 'error');
                 return;
             }
             
-            const btn = document.getElementById('signup-btn');
+            // Disable button
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
             
             try {
-                await register({ username, email, password, role: role || 'user' });
+                console.log('📤 Registering:', { username, email, role });
+                
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password, role })
+                });
+                
+                const data = await response.json();
+                console.log('📥 Signup response:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Registration failed');
+                }
+                
+                showNotification('Account created! Please login.', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                
             } catch (error) {
-                showError(error.message || 'Registration failed. Please try again.');
-            } finally {
+                console.error('❌ Signup error:', error);
+                showNotification(error.message || 'Registration failed. Please try again.', 'error');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
             }
-        };
+        }
+
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        
+        function showNotification(message, type = 'info') {
+            const existingContainer = document.getElementById('notification-container');
+            if (existingContainer) {
+                existingContainer.remove();
+            }
+            
+            const container = document.createElement('div');
+            container.id = 'notification-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                max-width: 380px;
+                width: 100%;
+            `;
+            document.body.appendChild(container);
+            
+            const colors = {
+                success: 'rgba(46, 204, 113, 0.95)',
+                error: 'rgba(231, 76, 60, 0.95)',
+                warning: 'rgba(243, 156, 18, 0.95)',
+                info: 'rgba(52, 152, 219, 0.95)'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 500;
+                animation: slideInRight 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            `;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                            if (container.children.length === 0) {
+                                container.remove();
+                            }
+                        }
+                    }, 300);
+                }
+            }, 4000);
+            
+            notification.addEventListener('click', () => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                            if (container.children.length === 0) {
+                                container.remove();
+                            }
+                        }
+                    }, 300);
+                }
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             selectRole('user');
+            
+            // Enter key support
+            document.getElementById('confirm-password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSignup();
+                }
+            });
         });
     </script>
+
+    <style>
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
 </body>
-    </html>
+</html>
