@@ -1,95 +1,174 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Dashboard - Developer Platform</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="navbar-brand">
-                <img src="logo.png" alt="Platform Logo" height="40">
-                <span>DevPlatform</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="developers.html" class="active">Dashboard</a></li>
-                <li><a href="search.html">Search</a></li>
-                <li><a href="editor.html">Editor</a></li>
-                <li><a href="publish.html">Publish</a></li>
-                <li><a href="analytics.html">Analytics</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-                <li>
-                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">
-                        🌓
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </nav>
+// all.js - Add this function
 
-    <div class="container" style="padding:30px 0;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:30px;">
-            <div>
-                <h1>Developer Dashboard</h1>
-                <p style="color:var(--gray);">Manage your projects, deployments, and apps</p>
-            </div>
-            <div>
+// ============================================================
+// DEVELOPER DASHBOARD
+// ============================================================
+
+export const loadDeveloperDashboard = async () => {
+    try {
+        const stats = await api.developer.getDashboard();
+        
+        // Update stats
+        document.querySelectorAll('.stat-value').forEach((el, index) => {
+            const values = [
+                stats.projects || 0,
+                stats.activeDeployments || 0,
+                stats.publishedApps || 0,
+                stats.totalDownloads || 0,
+                stats.usage?.storage?.used || '0 MB',
+                stats.usage?.cpu?.used || '0%'
+            ];
+            if (el) el.textContent = values[index] || '0';
+        });
+
+        // Load projects
+        const projects = await api.developer.getProjects();
+        renderProjects(projects);
+
+        // Load deployments
+        const deployments = await api.developer.getDeployments();
+        renderDeployments(deployments);
+
+        // Load published apps
+        const apps = await api.developer.getPublishedApps();
+        renderPublishedApps(apps);
+
+    } catch (error) {
+        console.error('Failed to load developer dashboard:', error);
+        showError('Failed to load dashboard');
+    }
+};
+
+export const renderProjects = (projects) => {
+    const container = document.getElementById('dev-projects');
+    if (!container) return;
+
+    if (!projects || projects.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Projects Yet</h3>
+                <p>Create your first project to start building</p>
                 <button class="btn btn-primary" onclick="navigateTo('editor', { new: true })">
-                    ➕ New Project
+                    <i class="fas fa-plus"></i> Create Project
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = projects.map(project => `
+        <div class="project-card">
+            <div class="project-header">
+                <h3>${project.name}</h3>
+                <span class="project-status ${project.status || 'active'}">${project.status || 'Active'}</span>
+            </div>
+            <p class="project-description">${project.description || 'No description'}</p>
+            <div class="project-meta">
+                <span><i class="fas fa-code"></i> ${project.framework || 'Unknown'}</span>
+                <span><i class="fas fa-file-code"></i> ${project.language || 'Unknown'}</span>
+                <span><i class="fas fa-clock"></i> ${project.lastDeployed ? new Date(project.lastDeployed).toLocaleDateString() : 'Never'}</span>
+            </div>
+            <div class="project-actions">
+                <button class="btn btn-primary btn-sm" onclick="navigateTo('editor', { project: '${project._id}' })">
+                    <i class="fas fa-edit"></i> Open
+                </button>
+                <button class="btn btn-success btn-sm" onclick="navigateTo('deploy', { project: '${project._id}' })">
+                    <i class="fas fa-rocket"></i> Deploy
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="navigateTo('settings')">
+                    <i class="fas fa-cog"></i>
                 </button>
             </div>
         </div>
+    `).join('');
+};
 
-        <!-- Stats -->
-        <div class="dashboard-stats" id="dev-stats">
-            <!-- Loaded dynamically -->
+export const renderDeployments = (deployments) => {
+    const tbody = document.getElementById('recent-deployments');
+    if (!tbody) return;
+
+    if (!deployments || deployments.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-table">
+                    <i class="fas fa-inbox"></i> No deployments yet
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = deployments.slice(0, 5).map(deployment => `
+        <tr>
+            <td><strong>${deployment.project?.name || 'Unknown'}</strong></td>
+            <td>v${deployment.version || '1.0.0'}</td>
+            <td>${deployment.branch || 'main'}</td>
+            <td>
+                <span class="status-badge ${deployment.status || 'pending'}">
+                    ${deployment.status || 'Pending'}
+                </span>
+            </td>
+            <td>${new Date(deployment.deployedAt).toLocaleDateString()}</td>
+            <td>
+                <button class="btn btn-sm btn-outline" onclick="viewDeployment('${deployment._id}')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+};
+
+export const renderPublishedApps = (apps) => {
+    const container = document.getElementById('published-apps');
+    if (!container) return;
+
+    if (!apps || apps.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-th-large"></i>
+                <h3>No Published Apps</h3>
+                <p>Publish your first app to the marketplace</p>
+                <button class="btn btn-primary" onclick="navigateTo('publish')">
+                    <i class="fas fa-upload"></i> Publish App
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = apps.map(app => `
+        <div class="app-card" onclick="navigateTo('app', { id: '${app._id}' })">
+            <img src="${app.icon || '/assets/default-app-icon.png'}" alt="${app.name}" class="app-card-image">
+            <div class="app-card-content">
+                <h3 class="app-card-title">${app.name}</h3>
+                <p class="app-card-developer">${app.developerName || 'You'}</p>
+                <div class="app-card-rating">
+                    <i class="fas fa-star"></i> ${app.rating || 'N/A'}
+                </div>
+                <div class="app-card-stats">
+                    <span><i class="fas fa-download"></i> ${app.downloads || 0}</span>
+                    <span><i class="fas fa-users"></i> ${app.users || 0}</span>
+                </div>
+            </div>
         </div>
+    `).join('');
+};
 
-        <!-- Quick Actions -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin:30px 0;">
-            <button class="btn btn-primary" onclick="navigateTo('editor', { new: true })">📝 New Project</button>
-            <button class="btn btn-success" onclick="navigateTo('publish')">📱 Publish App</button>
-            <button class="btn btn-secondary" onclick="navigateTo('deploy')">🚀 Deploy</button>
-            <button class="btn btn-outline" onclick="navigateTo('analytics')">📊 Analytics</button>
-        </div>
-
-        <!-- Projects -->
-        <section style="margin-top:40px;">
-            <h2>📁 Your Projects</h2>
-            <div id="dev-projects">
-                <!-- Loaded dynamically -->
-            </div>
-        </section>
-
-        <!-- Recent Deployments -->
-        <section style="margin-top:40px;">
-            <h2>🚀 Recent Deployments</h2>
-            <div class="table-container" id="recent-deployments">
-                <!-- Loaded dynamically -->
-            </div>
-        </section>
-
-        <!-- Published Apps -->
-        <section style="margin-top:40px;">
-            <h2>📱 Published Apps</h2>
-            <div class="card-grid" id="published-apps">
-                <!-- Loaded dynamically -->
-            </div>
-        </section>
-    </div>
-
-    <script type="module">
-        import { loadDeveloperDashboard, navigateTo, logout, toggleTheme } from './all.js';
-        
-        window.navigateTo = navigateTo;
-        window.logout = logout;
-        window.toggleTheme = toggleTheme;
-        
-        document.addEventListener('DOMContentLoaded', loadDeveloperDashboard);
-    </script>
-</body>
-</html>
+// Add to export
+export default {
+    register,
+    login,
+    logout,
+    navigateTo,
+    getUrlParams,
+    showSuccess,
+    showError,
+    showInfo,
+    showWarning,
+    initNavigation,
+    loadDeveloperDashboard,
+    renderProjects,
+    renderDeployments,
+    renderPublishedApps
+};
