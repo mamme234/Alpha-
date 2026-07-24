@@ -1,81 +1,17 @@
 services:
-  # Main Web Service (Backend + Frontend)
   - type: web
     name: alpha-platform
-    runtime: node
-    repo: https://github.com/mamme234/Alpha
-    plan: free
-    region: ohio
+    env: node
     buildCommand: npm install
-    startCommand: node server.js
-    healthCheckPath: /health
-    autoDeploy: true
-    
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 5000
+        value: 3000
       - key: JWT_SECRET
         generateValue: true
-      - key: FRONTEND_URL
-        value: https://alpha-platform.onrender.com
-      - key: BASE_DOMAIN
-        value: alpha-platform.onrender.com
-      
-      # PostgreSQL Database (Internal)
-      - key: DB_HOST
-        fromDatabase:
-          name: alpha-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: alpha-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: alpha-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: alpha-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: alpha-db
-          property: password
-      
-      # MongoDB
-      - key: MONGODB_URI
-        fromDatabase:
-          name: alpha-mongo
-          property: connectionString
-      
-      # Redis (Optional)
-      - key: REDIS_URL
-        fromService:
-          name: alpha-redis
-          type: redis
-          property: connectionString
-
-  # Redis Service (Optional)
-  - type: redis
-    name: alpha-redis
-    region: ohio
-    plan: free
-    maxmemoryPolicy: noeviction
-
-databases:
-  # PostgreSQL Database
-  - name: alpha-db
-    plan: free
-    region: ohio
-    databaseName: alpha_platform
-    user: alpha_user
-  
-  # MongoDB Database
-  - name: alpha-mongo
-    plan: free
-    region: ohio
-    databaseName: alpha_platform
-    user: alpha_user
+      - key: DATABASE_URL
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
