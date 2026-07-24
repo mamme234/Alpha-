@@ -1,167 +1,268 @@
-// main.js - Complete updated file
-import api from './api.js';
-import config from './config.js';
-import { initNavigation } from './all.js';
+// Main JavaScript for Alpha Platform
 
-class App {
-    constructor() {
-        this.currentUser = null;
-        this.init();
-    }
+// ========== AUTH FUNCTIONS ==========
 
-    async init() {
-        this.loadEntryLogo();
-        initNavigation();
+// Handle Google Login
+function handleGoogleLogin() {
+    window.location.href = '/api/auth/google';
+}
 
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            try {
-                await this.loadUser();
-            } catch (error) {
-                console.error('Auth check failed:', error);
-            }
-        }
+// Handle GitHub Login
+function handleGitHubLogin() {
+    window.location.href = '/api/auth/github';
+}
 
-        this.setupEventListeners();
-        this.initPage();
-    }
-
-    loadEntryLogo() {
-        const container = document.getElementById('entry-logo-container');
-        if (!container) return;
-
-        fetch('logo.html')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('logo.html not found');
-                }
-                return response.text();
-            })
-            .then(html => {
-                container.innerHTML = html;
-            })
-            .catch(error => {
-                console.warn('Could not load logo.html:', error);
-                container.innerHTML = `
-                    <div class="fallback-logo" style="text-align:center;padding:40px 0;">
-                        <div style="font-size:80px;color:#ff0000;">🚀</div>
-                        <h2 style="font-family:'Black Ops One',cursive;font-size:48px;background:linear-gradient(135deg,#ff1a1a,#cc0000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                            Alpha
-                        </h2>
-                        <p style="color:rgba(255,255,255,0.3);font-size:14px;letter-spacing:4px;text-transform:uppercase;">
-                            developers choice
-                        </p>
-                    </div>
-                `;
-            });
-    }
-
-    async loadUser() {
-        try {
-            const user = await api.auth.me();
-            this.currentUser = user;
-            this.updateUI();
-        } catch (error) {
-            api.auth.logout();
-        }
-    }
-
-    setupEventListeners() {
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.logout-btn')) {
-                this.logout();
-            }
-        });
-        
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[data-nav]');
-            if (link) {
-                e.preventDefault();
-                this.navigate(link.href);
-            }
-        });
-    }
-
-    async initPage() {
-        const path = window.location.pathname;
-        const page = path.split('/').pop() || 'index.html';
-        
-        try {
-            switch(page) {
-                case 'index.html':
-                case '':
-                    break;
-                case 'login.html':
-                    break;
-                case 'signup.html':
-                    break;
-                case 'choose.html':
-                    break;
-                case 'users.html':
-                    await this.showUserDashboard();
-                    break;
-                case 'developers.html':
-                    await this.showDeveloperDashboard();
-                    break;
-                case 'app.html':
-                    await this.showAppDetails();
-                    break;
-                case 'search.html':
-                    await this.showSearch();
-                    break;
-                default:
-                    console.log('Page:', page);
-            }
-        } catch (error) {
-            console.error('Page init error:', error);
-        }
-    }
-
-    async showUserDashboard() {
-        if (!this.currentUser || this.currentUser.role !== 'user') {
-            window.location.href = '/login.html';
-            return;
-        }
-    }
-
-    async showDeveloperDashboard() {
-        if (!this.currentUser || this.currentUser.role !== 'developer') {
-            window.location.href = '/login.html';
-            return;
-        }
-    }
-
-    async showAppDetails() {}
-    async showSearch() {}
-
-    updateUI() {
-        const isLoggedIn = !!this.currentUser;
-        document.querySelectorAll('[data-auth]').forEach(el => {
-            el.style.display = isLoggedIn ? 'block' : 'none';
-        });
-        document.querySelectorAll('[data-guest]').forEach(el => {
-            el.style.display = isLoggedIn ? 'none' : 'block';
-        });
-        if (this.currentUser) {
-            const usernameEl = document.querySelector('[data-username]');
-            if (usernameEl) usernameEl.textContent = this.currentUser.username;
-        }
-    }
-
-    logout() {
-        api.auth.logout();
-        this.currentUser = null;
-        this.updateUI();
-        window.location.href = '/index.html';
-    }
-
-    navigate(url) {
-        window.location.href = url;
+// Handle Login Form
+function handleLogin(event) {
+    event.preventDefault();
+    const form = event.target;
+    const email = form.querySelector('input[type="email"]').value;
+    const password = form.querySelector('input[type="password"]').value;
+    
+    // Simulate login
+    if (email && password) {
+        localStorage.setItem('user', JSON.stringify({ name: 'Muhammad', email }));
+        window.location.href = '/dashboard';
+    } else {
+        alert('Please fill in all fields');
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new App();
+// Handle Register Form
+function handleRegister(event) {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.querySelector('input[type="text"]').value;
+    const email = form.querySelector('input[type="email"]').value;
+    const password = form.querySelectorAll('input[type="password"]')[0].value;
+    const confirm = form.querySelectorAll('input[type="password"]')[1].value;
+    
+    if (password !== confirm) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (name && email && password) {
+        localStorage.setItem('user', JSON.stringify({ name, email }));
+        window.location.href = '/dashboard';
+    } else {
+        alert('Please fill in all fields');
+    }
+}
+
+// ========== UI FUNCTIONS ==========
+
+// Toggle Menu Dropdown
+function toggleMenu() {
+    const dropdown = document.getElementById('menuDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('open');
+    }
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function(event) {
+    const menuIcon = document.querySelector('.menu-icon');
+    const dropdown = document.getElementById('menuDropdown');
+    if (menuIcon && !menuIcon.contains(event.target)) {
+        if (dropdown) dropdown.classList.remove('open');
+    }
 });
 
-export default App;
+// Toggle Theme
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const icon = document.getElementById('themeIcon');
+    if (icon) {
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+    }
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+// Load theme preference
+function loadTheme() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+        document.body.classList.add('dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    }
+}
+
+// Open New Project Modal
+function openNewProjectModal() {
+    const modal = document.getElementById('newProjectModal');
+    if (modal) {
+        modal.classList.add('open');
+    }
+}
+
+// Close Modal
+function closeModal() {
+    const modal = document.getElementById('newProjectModal');
+    if (modal) {
+        modal.classList.remove('open');
+    }
+}
+
+// Handle New Project Submission
+function handleNewProject(event) {
+    event.preventDefault();
+    const form = event.target;
+    const projectName = form.querySelector('input[placeholder="Project name"]').value;
+    const repoUrl = document.getElementById('repoUrl').value;
+    
+    if (projectName && repoUrl) {
+        alert(`🚀 Deploying "${projectName}" from ${repoUrl}\nThis would trigger a build and deployment process.`);
+        closeModal();
+    } else {
+        alert('Please enter a project name and repository URL');
+    }
+}
+
+// ========== API FUNCTIONS ==========
+
+// Fetch User Data
+async function fetchUserData() {
+    try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+    }
+}
+
+// Fetch Projects
+async function fetchProjects() {
+    try {
+        const response = await fetch('/api/projects');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching projects:', error);
+        return [];
+    }
+}
+
+// Fetch Services
+async function fetchServices() {
+    try {
+        const response = await fetch('/api/services');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching services:', error);
+        return [];
+    }
+}
+
+// Fetch Deployments
+async function fetchDeployments() {
+    try {
+        const response = await fetch('/api/deployments');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching deployments:', error);
+        return [];
+    }
+}
+
+// Fetch Metrics
+async function fetchMetrics(serviceId) {
+    try {
+        const response = await fetch(`/api/metrics/${serviceId}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching metrics:', error);
+        return null;
+    }
+}
+
+// Deploy Project
+async function deployProject(projectId) {
+    try {
+        const response = await fetch(`/api/deployments/deploy/${projectId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error deploying project:', error);
+        return null;
+    }
+}
+
+// ========== UTILITY FUNCTIONS ==========
+
+// Format Date
+function formatDate(date) {
+    return new Date(date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Generate Random ID
+function generateId() {
+    return Math.random().toString(36).substring(2, 9);
+}
+
+// Check if user is logged in
+function checkAuth() {
+    const user = localStorage.getItem('user');
+    if (!user && !window.location.pathname.includes('login') && !window.location.pathname.includes('register')) {
+        window.location.href = '/login';
+    }
+    return user ? JSON.parse(user) : null;
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+}
+
+// ========== INITIALIZATION ==========
+
+// Load theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadTheme();
+    
+    // Check authentication
+    const user = checkAuth();
+    
+    // Update UI with user info
+    if (user) {
+        const avatar = document.querySelector('.avatar');
+        if (avatar) {
+            avatar.textContent = user.name.charAt(0).toUpperCase();
+            avatar.title = user.name;
+        }
+    }
+    
+    // Close modal on outside click
+    const modalOverlay = document.querySelector('.modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+});
+
+console.log('🚀 Alpha Platform loaded successfully!');
