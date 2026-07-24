@@ -14,34 +14,154 @@
             margin: 0 auto;
             padding: 20px 40px 60px;
         }
-        .deploy-status {
-            padding: 8px 16px;
+        .deploy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 24px;
+        }
+        .deploy-header h1 {
+            font-family: 'Black Ops One', cursive;
+            font-size: 28px;
+            background: linear-gradient(135deg, #ffffff, #cccccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .deploy-header .status {
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
         }
-        .deploy-status.ready { background: rgba(52,152,219,0.15); color: #3498db; }
-        .deploy-status.deploying { background: rgba(243,156,18,0.15); color: #f39c12; animation: pulse 1s infinite; }
-        .deploy-status.success { background: rgba(46,204,113,0.15); color: #2ecc71; }
-        .deploy-status.failed { background: rgba(231,76,60,0.15); color: #e74c3c; }
+        .deploy-header .status.ready { background: rgba(52,152,219,0.15); color: #3498db; }
+        .deploy-header .status.deploying { background: rgba(243,156,18,0.15); color: #f39c12; animation: pulse 1s infinite; }
+        .deploy-header .status.live { background: rgba(46,204,113,0.15); color: #2ecc71; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .deploy-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .deploy-card h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 16px;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .form-group select:focus, .form-group input:focus {
+            border-color: rgba(255,0,0,0.3);
+        }
+        .form-group select option { background: #1a1a2e; }
+
+        .deploy-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+        .deploy-actions .btn { padding: 10px 24px; font-size: 14px; }
+
         .deploy-logs {
             background: #0a0a0a;
-            border: 1px solid rgba(255,0,0,0.06);
-            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
             padding: 16px;
-            height: 250px;
+            height: 200px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
             font-size: 12px;
             color: #00ff41;
-            margin-top: 16px;
+            margin-top: 12px;
         }
-        .deploy-logs .log-line { padding: 2px 0; }
-        .deploy-logs .log-error { color: #ff6b6b; }
-        .deploy-logs .log-success { color: #2ecc71; }
-        .deploy-logs .log-warning { color: #f39c12; }
+        .deploy-logs .log-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .deploy-logs .log-line .time { color: rgba(255,255,255,0.1); margin-right: 12px; }
+        .deploy-logs .log-line .info { color: rgba(255,255,255,0.4); }
+        .deploy-logs .log-line .success { color: #2ecc71; }
+        .deploy-logs .log-line .error { color: #ff6b6b; }
+        .deploy-logs .log-line .warning { color: #f39c12; }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-success {
+            background: rgba(46,204,113,0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46,204,113,0.2);
+        }
+        .btn-success:hover { background: rgba(46,204,113,0.3); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); }
+        .btn-sm { padding: 4px 14px; font-size: 11px; border-radius: 20px; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .deploy-url-box {
+            background: rgba(46,204,113,0.05);
+            border: 1px solid rgba(46,204,113,0.15);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .deploy-url-box .url { color: #2ecc71; font-size: 14px; font-weight: 500; }
+        .deploy-url-box .url i { margin-right: 8px; }
+
         @media (max-width: 768px) {
             .deploy-container { padding: 16px 20px; }
+            .deploy-header { flex-direction: column; align-items: flex-start; }
+            .deploy-actions { flex-direction: column; }
+            .deploy-actions .btn { width: 100%; justify-content: center; }
+            .deploy-url-box { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .deploy-container { padding: 12px 12px 40px; }
+            .deploy-header h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -74,7 +194,6 @@
             <nav class="nav" id="nav">
                 <a href="developers.html">Dashboard</a>
                 <a href="deploy.html" class="active">Deploy</a>
-                <a href="editor.html">Editor</a>
                 <a href="#" onclick="logout()">Logout</a>
             </nav>
             <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -85,172 +204,152 @@
 
     <main class="page-content">
         <div class="deploy-container">
-            <div class="dashboard-header">
+            <div class="deploy-header">
                 <div>
-                    <h1 class="dashboard-title">🚀 Deploy</h1>
-                    <p class="dashboard-subtitle">Deploy your project to the cloud with one click</p>
+                    <h1>🚀 Deploy</h1>
+                    <p style="color:rgba(255,255,255,0.3);font-size:14px;">Deploy your web app and get a live URL</p>
                 </div>
                 <div>
-                    <span class="deploy-status ready" id="deploy-status">Ready</span>
+                    <span class="status ready" id="deploy-status"><i class="fas fa-circle"></i> Ready</span>
                 </div>
             </div>
 
-            <div class="card" style="padding:24px;margin-top:20px;">
+            <div class="deploy-card">
+                <h3><i class="fas fa-cogs"></i> Deployment Configuration</h3>
+
                 <div class="form-group">
-                    <label class="form-label">Select Project</label>
-                    <select id="project-select" class="form-control">
-                        <option value="">Select a project...</option>
-                        <option value="1">My Awesome App</option>
-                        <option value="2">API Service</option>
-                        <option value="3">Static Website</option>
+                    <label>Select Web App</label>
+                    <select id="app-select">
+                        <option value="">Select an app...</option>
                     </select>
                 </div>
 
-                <div class="form-group" style="margin-top:16px;">
-                    <label class="form-label">Branch</label>
-                    <select id="branch-select" class="form-control">
-                        <option value="main">main</option>
-                        <option value="develop">develop</option>
-                        <option value="staging">staging</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-top:16px;">
-                    <label class="form-label">Environment</label>
-                    <select id="env-select" class="form-control">
+                <div class="form-group">
+                    <label>Environment</label>
+                    <select id="env-select">
                         <option value="production">🚀 Production</option>
                         <option value="staging">🧪 Staging</option>
-                        <option value="development">💻 Development</option>
+                        <option value="preview">👁️ Preview</option>
                     </select>
                 </div>
 
-                <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+                <div class="deploy-actions">
                     <button class="btn btn-success" onclick="startDeploy()" id="deploy-btn">
                         <i class="fas fa-rocket"></i> Deploy Now
                     </button>
-                    <button class="btn btn-outline" onclick="addEnvVar()">
-                        <i class="fas fa-plus"></i> Add Env Variable
+                    <button class="btn btn-outline" onclick="clearLogs()">
+                        <i class="fas fa-trash"></i> Clear Logs
                     </button>
                 </div>
             </div>
 
-            <div class="card" style="padding:20px;margin-top:20px;">
-                <h3 style="font-family:'Black Ops One',cursive;font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:12px;">
-                    <i class="fas fa-terminal"></i> Deployment Logs
-                </h3>
-                <div class="deploy-logs" id="deploy-logs">
-                    <div class="log-line">💻 Waiting for deployment...</div>
+            <div id="deploy-url-container" style="display:none;">
+                <div class="deploy-url-box">
+                    <span class="url"><i class="fas fa-globe"></i> <span id="deploy-url">https://app.alpha-platform.com</span></span>
+                    <div>
+                        <button class="btn btn-success btn-sm" onclick="openDeployUrl()"><i class="fas fa-external-link-alt"></i> Open</button>
+                        <button class="btn btn-outline btn-sm" onclick="copyDeployUrl()"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="card" style="padding:20px;margin-top:20px;">
-                <h3 style="font-family:'Black Ops One',cursive;font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:12px;">
-                    <i class="fas fa-history"></i> Deployment History
-                </h3>
-                <div class="table-container">
-                    <table class="table">
-                        <thead><tr><th>Version</th><th>Branch</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-                        <tbody id="deploy-history">
-                            <tr><td colspan="5" class="empty-table"><i class="fas fa-inbox"></i> No deployments yet</td></tr>
-                        </tbody>
-                    </table>
+            <div class="deploy-card" style="margin-top:20px;">
+                <h3><i class="fas fa-terminal"></i> Deployment Logs</h3>
+                <div class="deploy-logs" id="deploy-logs">
+                    <div class="log-line">
+                        <span class="time">[${new Date().toLocaleTimeString()}]</span>
+                        <span class="info">💻 Ready for deployment. Select an app and click Deploy.</span>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
+        let currentDeployUrl = null;
         let isDeploying = false;
 
-        function logout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
+        function loadApps() {
+            const select = document.getElementById('app-select');
+            select.innerHTML = '<option value="">Select an app...</option>';
+            try {
+                const apps = JSON.parse(localStorage.getItem('alpha_webapps')) || [];
+                apps.forEach(app => {
+                    const option = document.createElement('option');
+                    option.value = app.id;
+                    option.textContent = app.name + (app.url ? ` (${app.url})` : '');
+                    select.appendChild(option);
+                });
+            } catch (e) {}
         }
 
         function addLog(message, type = 'info') {
             const logs = document.getElementById('deploy-logs');
             const line = document.createElement('div');
-            line.className = `log-line log-${type}`;
+            line.className = 'log-line';
+            const time = new Date().toLocaleTimeString();
             const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
-            line.textContent = `${icons[type] || '•'} ${message}`;
+            const classes = { info: 'info', success: 'success', error: 'error', warning: 'warning' };
+            line.innerHTML = `<span class="time">[${time}]</span><span class="${classes[type] || 'info'}">${icons[type] || '•'} ${message}</span>`;
             logs.appendChild(line);
             logs.scrollTop = logs.scrollHeight;
         }
 
+        function clearLogs() {
+            const logs = document.getElementById('deploy-logs');
+            logs.innerHTML = `<div class="log-line"><span class="time">[${new Date().toLocaleTimeString()}]</span><span class="info">🧹 Logs cleared</span></div>`;
+        }
+
         function startDeploy() {
-            if (isDeploying) return;
-            const project = document.getElementById('project-select').value;
-            if (!project) {
-                addLog('Please select a project', 'warning');
-                return;
-            }
+            const appId = document.getElementById('app-select').value;
+            if (!appId) { addLog('Please select an app', 'warning'); return; }
+            if (isDeploying) { addLog('Deployment already in progress', 'warning'); return; }
 
             isDeploying = true;
             const btn = document.getElementById('deploy-btn');
             const status = document.getElementById('deploy-status');
-            
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying...';
-            status.className = 'deploy-status deploying';
-            status.textContent = 'Deploying...';
+            status.className = 'status deploying';
+            status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying...';
 
-            addLog(`Starting deployment for project: ${project}`, 'info');
-            addLog('Cloning repository...', 'info');
-            
-            let step = 0;
-            const steps = [
-                { msg: 'Installing dependencies...', delay: 1000 },
-                { msg: 'Building project...', delay: 2000 },
-                { msg: 'Running tests...', delay: 1500 },
-                { msg: 'Deploying to servers...', delay: 2000 },
-                { msg: 'Deployment successful! 🎉', delay: 1000, success: true }
-            ];
+            const env = document.getElementById('env-select').value;
 
-            function runStep() {
-                if (step < steps.length) {
-                    const s = steps[step];
-                    addLog(s.msg, s.success ? 'success' : 'info');
-                    step++;
-                    setTimeout(runStep, s.delay);
-                } else {
-                    isDeploying = false;
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-rocket"></i> Deploy Now';
-                    status.className = 'deploy-status success';
-                    status.textContent = '✅ Success';
-                    
-                    // Add to history
-                    const tbody = document.getElementById('deploy-history');
-                    tbody.innerHTML = `
-                        <tr>
-                            <td><strong>v1.0.0</strong></td>
-                            <td>${document.getElementById('branch-select').value}</td>
-                            <td><span class="status-badge success">Success</span></td>
-                            <td>${new Date().toLocaleString()}</td>
-                            <td><button class="btn btn-sm btn-outline" onclick="viewDeploy()"><i class="fas fa-eye"></i></button></td>
-                        </tr>
-                    ` + tbody.innerHTML;
+            try {
+                const apps = JSON.parse(localStorage.getItem('alpha_webapps')) || [];
+                const app = apps.find(a => a.id == appId);
+                if (app) {
+                    addLog(`🚀 Starting deployment for ${app.name}`, 'info');
+                    addLog(`🌍 Environment: ${env}`, 'info');
+                    addLog('📦 Building...', 'info');
+                    setTimeout(() => addLog('🔧 Installing dependencies...', 'info'), 1000);
+                    setTimeout(() => addLog('🏗️ Building project...', 'info'), 2000);
+                    setTimeout(() => addLog('📤 Deploying...', 'info'), 3000);
+                    setTimeout(() => {
+                        const url = app.url || `https://${app.name.toLowerCase().replace(/\s+/g, '-')}.alpha-platform.com`;
+                        currentDeployUrl = url;
+                        document.getElementById('deploy-url').textContent = url;
+                        document.getElementById('deploy-url-container').style.display = 'block';
+                        addLog(`✅ Deployment successful! 🎉`, 'success');
+                        addLog(`🔗 Live URL: ${url}`, 'success');
+                        isDeploying = false;
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-rocket"></i> Deploy Now';
+                        status.className = 'status live';
+                        status.innerHTML = '<i class="fas fa-circle"></i> Live';
+                    }, 4500);
                 }
-            }
-
-            setTimeout(runStep, 500);
+            } catch (e) { addLog('❌ Deployment failed: ' + e.message, 'error'); }
         }
 
-        function addEnvVar() {
-            const key = prompt('Enter environment variable name:');
-            if (!key) return;
-            const value = prompt(`Enter value for ${key}:`);
-            if (!value) return;
-            addLog(`Added environment variable: ${key}=***`, 'success');
-        }
+        function openDeployUrl() { if (currentDeployUrl) window.open(currentDeployUrl, '_blank'); }
+        function copyDeployUrl() { if (currentDeployUrl) { navigator.clipboard.writeText(currentDeployUrl); addLog('📋 URL copied!', 'success'); } }
 
-        function viewDeploy() {
-            addLog('Viewing deployment details...', 'info');
-        }
+        function logout() { localStorage.removeItem('authToken'); localStorage.removeItem('user'); window.location.href = 'index.html'; }
 
-        // Hamburger
         document.addEventListener('DOMContentLoaded', () => {
+            loadApps();
             const hamburger = document.getElementById('hamburger');
             const nav = document.getElementById('nav');
             if (hamburger && nav) {
@@ -270,7 +369,7 @@
                 if (window.scrollY > 20) header.classList.add('scrolled');
                 else header.classList.remove('scrolled');
             });
-            addLog('💡 Select a project and click Deploy Now to start', 'info');
+            addLog('💡 Select an app and click Deploy Now', 'info');
         });
     </script>
 </body>
