@@ -1,226 +1,209 @@
-// server.js - Complete server file
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import dotenv from 'dotenv';
-import rateLimit from 'express-rate-limit';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config();
 
 // Import backend modules
-import { connectDB, getPgPool, getRedis } from './backend/db.js';
-import routes from './backend/routes.js';
-import { errorHandler, notFound } from './backend/middleware.js';
-import { startScheduler } from './backend/scheduler.js';
-import { setupSockets } from './backend/socket.js';
-import config from './backend/config.js';
+const authModule = require('./backend/auth');
+const workspaceModule = require('./backend/workspace');
+const projectModule = require('./backend/project');
+const serviceModule = require('./backend/service');
+const deploymentModule = require('./backend/deployment');
+const gitModule = require('./backend/git');
+const dockerModule = require('./backend/docker');
+const buildModule = require('./backend/build');
+const environmentModule = require('./backend/environment');
+const logModule = require('./backend/log');
+const metricsModule = require('./backend/metrics');
+const billingModule = require('./backend/billing');
+const notificationModule = require('./backend/notification');
+const roleModule = require('./backend/role');
+const domainModule = require('./backend/domain');
+const sslModule = require('./backend/ssl');
+const apiModule = require('./backend/api');
+const databaseModule = require('./backend/database');
 
-// ES module fix for __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load environment variables
-dotenv.config();
-
-// Initialize express app
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: process.env.FRONTEND_URL || 'https://alpha-af1q.onrender.com',
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-    }
-});
+const PORT = process.env.PORT || 3000;
 
-const PORT = process.env.PORT || 5000;
-
-// ==================== REQUEST LOGGING ====================
-app.use((req, res, next) => {
-    console.log(`📥 ${req.method} ${req.path}`);
-    if (req.path === '/api/auth/register') {
-        console.log('📝 Register request body:', { ...req.body, password: '***' });
-    }
-    next();
-});
-
-// ==================== SECURITY & PERFORMANCE ====================
-
-// Helmet security headers
+// Middleware
 app.use(helmet({
-    contentSecurityPolicy: false,
-    crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
 }));
-
-// Compression
-app.use(compression());
-
-// CORS configuration
-const allowedOrigins = [
-    'https://alpha-af1q.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:5000'
-];
-
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.warn('⚠️ CORS blocked:', origin);
-            callback(null, true); // Allow all in development
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://alpha-platform.onrender.com', 'http://localhost:3000']
+    : '*',
+  credentials: true
 }));
+app.use(compression());
+app.use(morgan('combined'));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-// Body parsing
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: 'Too many requests from this IP, please try again later.',
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use('/api', limiter);
-
-// ==================== STATIC FILES ====================
-
-// Serve static frontend files
+// Serve static files from frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
+app.use('/css', express.static(path.join(__dirname, 'frontend', 'css')));
+app.use('/js', express.static(path.join(__dirname, 'frontend', 'js')));
 
-// ==================== HEALTH CHECK ENDPOINTS ====================
+// API Routes
+app.use('/api/auth', authModule);
+app.use('/api/workspace', workspaceModule);
+app.use('/api/projects', projectModule);
+app.use('/api/services', serviceModule);
+app.use('/api/deployments', deploymentModule);
+app.use('/api/git', gitModule);
+app.use('/api/docker', dockerModule);
+app.use('/api/build', buildModule);
+app.use('/api/environment', environmentModule);
+app.use('/api/logs', logModule);
+app.use('/api/metrics', metricsModule);
+app.use('/api/billing', billingModule);
+app.use('/api/notifications', notificationModule);
+app.use('/api/roles', roleModule);
+app.use('/api/domains', domainModule);
+app.use('/api/ssl', sslModule);
+app.use('/api', apiModule);
+app.use('/api/database', databaseModule);
 
+// Health check endpoint
 app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        service: 'Alpha Platform',
-        version: '1.0.0',
-        environment: process.env.NODE_ENV || 'development',
-        uptime: process.uptime()
-    });
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
-app.get('/health/detailed', async (req, res) => {
-    const status = {
-        service: 'Alpha Platform',
-        version: '1.0.0',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        databases: {
-            postgres: false,
-            mongodb: false,
-            redis: false
-        },
-        memory: {
-            used: process.memoryUsage().heapUsed / 1024 / 1024,
-            total: process.memoryUsage().heapTotal / 1024 / 1024
-        }
-    };
-
-    try {
-        const pool = getPgPool();
-        if (pool) {
-            const client = await pool.connect();
-            await client.query('SELECT 1');
-            client.release();
-            status.databases.postgres = true;
-        }
-    } catch (error) {
-        status.databases.postgres = false;
-    }
-
-    res.status(200).json(status);
+// Serve HTML pages
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'login.html'));
 });
 
-app.get('/debug/env', (req, res) => {
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-    if (!isDevelopment) {
-        return res.status(403).json({ error: 'Forbidden in production' });
-    }
-
-    res.json({
-        NODE_ENV: process.env.NODE_ENV,
-        PORT: process.env.PORT,
-        DB_HOST: process.env.DB_HOST ? 'set' : 'not set',
-        DB_NAME: process.env.DB_NAME ? 'set' : 'not set',
-        DB_USER: process.env.DB_USER ? 'set' : 'not set',
-        FRONTEND_URL: process.env.FRONTEND_URL,
-        JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'not set',
-    });
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
 });
 
-// ==================== API ROUTES ====================
-
-app.use('/api', routes);
-
-// ==================== FRONTEND ROUTES ====================
-
-app.get('*', (req, res) => {
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+app.get('/projects', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'projects.html'));
 });
 
-// ==================== ERROR HANDLING ====================
-
-app.use(notFound);
-app.use(errorHandler);
-
-// Unhandled promise rejection handler
-process.on('unhandledRejection', (err) => {
-    console.error('❌ Unhandled Rejection:', err);
+app.get('/services', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'services.html'));
 });
 
-process.on('uncaughtException', (err) => {
-    console.error('❌ Uncaught Exception:', err);
+app.get('/deployments', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'deployments.html'));
+});
+
+app.get('/logs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'logs.html'));
+});
+
+app.get('/metrics', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'metrics.html'));
+});
+
+app.get('/domains', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'domains.html'));
+});
+
+app.get('/environment-variables', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'environment-variables.html'));
+});
+
+app.get('/billing', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'billing.html'));
+});
+
+app.get('/team', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'team.html'));
+});
+
+app.get('/notifications', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'notifications.html'));
+});
+
+app.get('/settings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'settings.html'));
+});
+
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'profile.html'));
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
+// Initialize services
+async function initializeServices() {
+  try {
+    console.log('🚀 Initializing Alpha Platform...');
+    
+    // Initialize database connection
+    await databaseModule.connect();
+    console.log('✅ Database connected');
+    
+    // Initialize other services
+    await workspaceModule.initialize();
+    await projectModule.initialize();
+    await serviceModule.initialize();
+    await deploymentModule.initialize();
+    await gitModule.initialize();
+    await dockerModule.initialize();
+    await buildModule.initialize();
+    await environmentModule.initialize();
+    await logModule.initialize();
+    await metricsModule.initialize();
+    await billingModule.initialize();
+    await notificationModule.initialize();
+    await roleModule.initialize();
+    await domainModule.initialize();
+    await sslModule.initialize();
+    await apiModule.initialize();
+    
+    console.log('✅ All services initialized');
+    console.log(`🌟 Alpha Platform running on http://localhost:${PORT}`);
+  } catch (error) {
+    console.error('❌ Failed to initialize services:', error);
+    process.exit(1);
+  }
+}
+
+// Start server
+app.listen(PORT, async () => {
+  console.log(`🔧 Server running on port ${PORT}`);
+  await initializeServices();
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-    console.log('📴 Received SIGTERM. Shutting down gracefully...');
-    server.close(() => {
-        console.log('✅ Server closed');
-        process.exit(0);
-    });
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  databaseModule.disconnect();
+  process.exit(0);
 });
 
-// ==================== START SERVER ====================
+process.on('SIGINT', () => {
+  console.log('🛑 SIGINT received, shutting down gracefully...');
+  databaseModule.disconnect();
+  process.exit(0);
+});
 
-const startServer = async () => {
-    try {
-        console.log('🚀 Starting server...');
-        
-        await connectDB();
-        startScheduler();
-        setupSockets(io);
-        
-        server.listen(PORT, () => {
-            console.log(`✅ Server running on port ${PORT}`);
-            console.log(`📱 Frontend: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}`);
-            console.log(`🔌 API: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/api`);
-            console.log(`❤️ Health: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/health`);
-            console.log(`🧪 Test: ${process.env.FRONTEND_URL || `http://localhost:${PORT}`}/api/test`);
-        });
-    } catch (error) {
-        console.error('❌ Failed to start server:', error);
-        process.exit(1);
-    }
-};
-
-startServer();
-
-export { app, server, io };
+module.exports = app;
